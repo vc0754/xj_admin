@@ -44,9 +44,9 @@ export default {
   data () {
     return {
       formPSW: {
-        username: '',
-        captcha: '',
-        pwd: '',
+        username: '18800000111',
+        pwd: '123456',
+        captcha: '1',
       },
       formValidatePSW: {
         username: [
@@ -74,8 +74,9 @@ export default {
     handleSubmit (name) {
       this.$refs[name].validate(valid => {
         if (!valid) return; // this.$message.error('提交失败!');
-        this.$http.post('/api/Home/Login', this.formPSW).then(res => {
-          this.$store.dispatch(USER_SIGNIN, res)
+        this.$http.post(`/api/Home/Login?username=${this.formPSW.username}&pwd=${this.formPSW.pwd}`, this.formPSW).then(res => {
+          sessionStorage.setItem('token', res.data.webToKen)
+          this.$store.dispatch(USER_SIGNIN, res.data)
           this.$router.replace({ path: '/' })
         }).catch(err => {
           this.$message.error(err.data.message)

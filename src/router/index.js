@@ -4,19 +4,75 @@ import VueRouter from 'vue-router'
 
 import store from '@/store'
 
-const Layout = resolve => require(['@/views/layout/Layout.vue'], resolve)
+const Layout = resolve => require(['@/layout/Layout.vue'], resolve)
 
 Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/home-page',
+    component: Layout,
+    children: [
+      {
+        path: '/home-page/dashboard-page',
+        meta: { title: '控制面板' },
+        component: () => import('@/views/MainView.vue')
+      }
+    ]
+  },
+  {
     path: '/',
     component: Layout,
     children: [
       {
-        path: '',
+        path: '/',
         meta: { title: '控制面板' },
         component: () => import('@/views/MainView.vue' /* webpackChunkName: 'main' */)
+      },
+      {
+        path: '/setting',
+        meta: { title: 'APP 设置' },
+        component: () => import('@/views/SettingView.vue' /* webpackChunkName: 'setting' */)
+      },
+      {
+        path: '/statistics',
+        meta: { title: '数据统计' },
+        component: () => import('@/views/StatisticsView.vue' /* webpackChunkName: 'statistics' */)
+      },
+      {
+        path: '/users',
+        meta: { title: '用户管理' },
+        component: () => import('@/views/user/ListView.vue' /* webpackChunkName: 'users' */)
+      },
+      {
+        path: '/user/detail',
+        meta: { title: '订单明细' },
+        component: () => import('@/views/user/DetailView.vue' /* webpackChunkName: 'detail' */)
+      },
+      {
+        path: '/orders',
+        meta: { title: '订单管理' },
+        component: () => import('@/views/order/ListView.vue' /* webpackChunkName: 'orders' */)
+      },
+      {
+        path: '/account',
+        meta: { title: '用户管理' },
+        component: () => import('@/views/account/Taobao.vue' /* webpackChunkName: 'users' */)
+      },
+      {
+        path: '/withdrawal',
+        meta: { title: '提现设置' },
+        component: () => import('@/views/withdrawal/ListView.vue' /* webpackChunkName: 'withdrawal' */)
+      },
+      {
+        path: '/withdrawal/detail',
+        meta: { title: '提现记录' },
+        component: () => import('@/views/withdrawal/DetailView.vue' /* webpackChunkName: 'wsetting' */)
+      },
+      {
+        path: '/withdrawal/setting',
+        meta: { title: '提现设置' },
+        component: () => import('@/views/withdrawal/Setting.vue' /* webpackChunkName: 'wsetting' */)
       },
     ]
   },
@@ -54,7 +110,8 @@ router.beforeEach(({meta, path}, from, next) => {
   let is_signin = store.getters.is_sign
   
   if (is_signin && path === '/sign') return next({ path: '/' })
-  if (auth && !is_signin && path !== '/sign') return next()
+  // 内页调试用，直接绕过登录
+  // if (auth && !is_signin && path !== '/sign') return next()
   if (auth && !is_signin && path !== '/sign') return next({ path: `/sign?redirect=${path}` })
 
   next()

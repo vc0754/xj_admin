@@ -5,11 +5,11 @@ export const USER_SIGNOUT = 'USER_SIGNOUT'
 
 export default {
   state: JSON.parse(sessionStorage.getItem('user')) || {
-    id: 0
+    webToKen: ''
   },
   getters: {
     is_sign(state) {
-      return Boolean(state.id)
+      return Boolean(state.webToKen)
     },
   },
   mutations: {
@@ -20,7 +20,7 @@ export default {
     [USER_SIGNOUT] (state) {
       sessionStorage.removeItem('user')
       Object.keys(state).forEach(k => Vue.delete(state, k))
-      this.state.user = { id: 0 }
+      this.state.user = { webToKen: '' }
     }
   },
   actions: {

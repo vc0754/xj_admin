@@ -11,15 +11,13 @@ axios.defaults.baseURL = 'http://yyapi_test.xijiee.com'
 
 axios.interceptors.request.use(config => {
   const token = sessionStorage.getItem('token')
-  if (token) config.headers['Authorization'] = `${token}`
+  if (token) config.headers['Token'] = `${token}`
   return config
 }, error => {
   return Promise.reject(error)
 })
 
 axios.interceptors.response.use(res => {
-  const token = res.headers['x-access-token']
-  if (token) sessionStorage.setItem('token', token)
   if (res.data.stateCode === 0) return Promise.reject(res)
   if (res.status !== 200 && res.status !== 201 && res.status !== 204) return Promise.reject(res)
   return res.data
