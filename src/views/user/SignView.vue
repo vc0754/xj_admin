@@ -15,6 +15,7 @@
           
           <el-form-item prop="captcha">
             <el-input v-model="formPSW.captcha" placeholder="验证码" :maxlength="6" />
+            <s-identify :identifyCode="identifyCode" class="captcha"></s-identify>
           </el-form-item>
         </el-form>
 
@@ -24,7 +25,7 @@
         
         <div class="sign-meta">
           <div>
-            <router-link to="/lost-password">忘记密码</router-link>
+            <router-link to="/lost-password">忘记密码？</router-link>
           </div>
         </div>
 
@@ -37,16 +38,20 @@
 <script>
 import { mapActions } from 'vuex'
 import { USER_SIGNIN } from '@/store/modules/user'
+import SIdentify  from '@/components/sidentify'
 export default {
   name: 'SignView',
   components: {
+    SIdentify
   },
   data () {
     return {
+      identifyCodes: '1234567890',
+      identifyCode: '',
       formPSW: {
         username: '18800000111',
         pwd: '123456',
-        captcha: '1',
+        captcha: ''
       },
       formValidatePSW: {
         username: [
@@ -69,11 +74,27 @@ export default {
   },
   methods: {
     ...mapActions([USER_SIGNIN]),
+    
+    randomNum(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    },
+    refreshCode() {
+      this.identifyCode = ''
+      this.makeCode(this.identifyCodes, 4)
+    },
+    makeCode(o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[
+          this.randomNum(0, this.identifyCodes.length)
+        ];
+      }
+    },
 
     // 提交表单
     handleSubmit (name) {
       this.$refs[name].validate(valid => {
         if (!valid) return; // this.$message.error('提交失败!');
+        if (this.formPSW.captcha !== this.identifyCode) return this.$message.error('验证码不匹配!');
         this.$http.post(`/api/Home/Login?username=${this.formPSW.username}&pwd=${this.formPSW.pwd}`, this.formPSW).then(res => {
           sessionStorage.setItem('token', res.data.webToKen)
           this.$store.dispatch(USER_SIGNIN, res.data)
@@ -84,9 +105,12 @@ export default {
       })
     },
   },
-  watch: {
+  created() {
+    this.refreshCode()
   },
-  mounted () {
+  mounted() {
+    this.identifyCode = '';
+    this.makeCode(this.identifyCodes, 4);
   }
 }
 </script>
@@ -139,6 +163,10 @@ export default {
     a {
       color: #EC4B4B;
     }
+  }
+
+  .captcha {
+    position: absolute; top: 4px; right: 8px;
   }
 }
 </style>

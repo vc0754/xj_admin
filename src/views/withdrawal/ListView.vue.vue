@@ -140,6 +140,12 @@ export default {
     payment() {
       this.dialogVisiblePayment = true
     },
+    handleClose() {
+      // done
+      // this.$confirm('确认关闭？').then(_ => {
+      //   done();
+      // }).catch(_ => {});
+    },
     query() {
       this.$http.post('/api/Home/GetTotalStatistics').then(res => {
         console.log(res)

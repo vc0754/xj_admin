@@ -65,6 +65,7 @@
         <el-menu-item style="padding-left:50px;" index="/withdrawal">提现列表</el-menu-item>
       </el-submenu>
       
+      <div class="line"></div>
 
       <template v-for="(item, index) in menus">
         <el-submenu :index="`sub_${index}`" :key="index" v-if="item.children.length">
@@ -113,7 +114,11 @@ export default {
     }
   },
   mounted() {
-    // this.query()
+    this.query()
   }
 }
 </script>
+
+<style lang="less" scoped>
+.line { border-bottom: solid 1px rgba(0,0,0,0.24); margin: 15px 0;}
+</style>
