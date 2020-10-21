@@ -15,95 +15,95 @@
           </el-date-picker>
         </el-form-item>
       </div>
-      <el-button type="primary" round>搜索</el-button>
+      <el-button type="primary" round @click="query">搜索</el-button>
     </el-form>
 
     <div class="formTable bg-white" style="padding: 30px 60px;">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="淘宝" name="first">
-          <el-table stripe :data="tableData" style="width: 100%">
-            <el-table-column prop="date" label="总成交额" width="180"></el-table-column>
-            <el-table-column prop="name" label="总佣金" width="180"></el-table-column>
-            <el-table-column prop="address" label="团队获得佣金"></el-table-column>
-            <el-table-column prop="address" label="获得利润"></el-table-column>
-            <el-table-column prop="address" label="结算订单数"></el-table-column>
-            <el-table-column prop="address" label="日期"></el-table-column>
-          </el-table>
-          
-          <div class="flex flex-x-right p-t-40 p-b-10">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 20, 30, 40]"
-              :page-size="10"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="400">
-            </el-pagination>
-          </div>
-
-        </el-tab-pane>
-        <el-tab-pane label="拼多多" name="second">
-          
-        </el-tab-pane>
-        <el-tab-pane label="东京" name="third">
-          
-        </el-tab-pane>
+        <el-tab-pane label="淘宝" name="t1"></el-tab-pane>
+        <el-tab-pane label="拼多多" name="t2"></el-tab-pane>
+        <el-tab-pane label="东京" name="t3"></el-tab-pane>
       </el-tabs>
+      
+      <el-table stripe :data="items" v-loading="loading" style="width: 100%">
+        <el-table-column prop="totalDealAmount" label="总成交额" width="180"></el-table-column>
+        <el-table-column prop="totalCommission" label="总佣金" width="180"></el-table-column>
+        <el-table-column prop="subsidiaryNeedPayCommission" label="团队获得佣金"></el-table-column>
+        <el-table-column prop="subsidiaryProfit" label="获得利润"></el-table-column>
+        <el-table-column prop="totalOrdersCount" label="结算订单数"></el-table-column>
+        <el-table-column prop="dateRange" label="日期" min-width="100"></el-table-column>
+      </el-table>
+      
+      <div class="flex flex-x-right p-t-40 p-b-10">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+        </el-pagination>
+      </div>
     </div>
 
+    <!-- <pre>{{ items }}</pre>
+    <pre>{{ date }}</pre> -->
 
-    <!-- <el-page-header @back="goBack" content="详情页面"></el-page-header> -->
   </section>
 </template>
 
 <script>
+import moment from 'moment'
 export default {
-  name: 'MainView',
+  name: 'StatisticsView',
   components: {},
   data () {
     return {
       form: {
         name: '',
       },
-      date: '',
-      activeName: 'first',
-      currentPage: 5,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      date: [],
+      activeName: 't1',
+      currentPage: 1,
+      pageSize: 10,
+      total: 0,
+      items: [],
+      loading: false
     }
   },
   computed: {
   },
   methods: {
     query () {
-      this.$http.post('/api/Home/GetTotalStatistics').then(res => {
-        console.log(res)
+      this.loading = true
+      this.$http.post('/api/Order/GetDataBillsStatistics', {
+        startTime: this.date && this.date.length && moment(this.date[0]).format('YYYY-MM-DD') || '',
+        endTime: this.date && this.date.length && moment(this.date[1]).format('YYYY-MM-DD') || '',
+        shoppingPlatformId: this.activeName.substring(1),
+        page: this.currentPage,
+        pageSize: this.pageSize
+      }).then(res => {
+        // console.log(res)
+        this.items = res.data.items
+        this.total = res.data.totalNum
+        this.loading = false
+      }).catch(err => {
+        this.loading = false
+        this.$message.error(err.data.message)
       })
     },
-    handleClick(tab, event) {
-      console.log(tab, event);
+    handleClick() {
+      this.query()
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.currentPage = 1
+      this.pageSize = val
+      this.query()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.currentPage = val
+      this.query()
     }
   },
   watch: {

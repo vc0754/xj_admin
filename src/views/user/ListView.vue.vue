@@ -28,13 +28,13 @@
 
       <el-table stripe :data="items" v-loading="loading" style="width: 100%">
         <el-table-column prop="userName" label="用户名" min-width="100"></el-table-column>
-        <el-table-column prop="authorize" label="授权账号" min-width="150"></el-table-column>
-        <el-table-column prop="invitation" label="APP邀请码"></el-table-column>
+        <el-table-column prop="authorize" label="授权账号" min-width="130"></el-table-column>
+        <el-table-column prop="invitation" label="APP邀请码" min-width="90"></el-table-column>
         <el-table-column prop="phone" label="手机号码" min-width="120"></el-table-column>
         <el-table-column prop="userRole" label="等级"></el-table-column>
         <el-table-column prop="parentNickName" label="推荐人"></el-table-column>
         <el-table-column prop="allMoney" label="账户余额"></el-table-column>
-        <el-table-column prop="regDateTime" label="注册时间"></el-table-column>
+        <el-table-column prop="regDateTime" label="注册时间" min-width="100"></el-table-column>
         <el-table-column prop="isUserFreeze" label="状态">
           <template slot-scope="scope">
             {{ scope.row.isUserFreeze === 0 ? '未冻结' : '冻结' }}

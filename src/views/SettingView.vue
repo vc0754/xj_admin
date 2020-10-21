@@ -12,16 +12,16 @@
       <el-form ref="form" :model="form" label-width="100px">
         <div>
           <el-form-item label="导师微信号：" style="margin-bottom: 28px;">
-            <el-input value="VX-15691251344" style="width:480px" />
+            <el-input value="" v-model="form.serviceWeChat" style="width:480px" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" round>保存</el-button>
+            <el-button type="primary" round @click="submit">保存</el-button>
           </el-form-item>
         </div>
       </el-form>
     </div>
 
-    <pre>{{ form }}</pre>
+    <!-- <pre>{{ form }}</pre> -->
 
   </section>
 </template>
@@ -38,16 +38,25 @@ export default {
   computed: {
   },
   methods: {
-    query () {
-      this.$http.post('/api/Home/GetTotalStatistics').then(res => {
-        console.log(res)
+    query() {
+      this.$http.post('/api/System/GetBaseConfigList').then(res => {
+        this.form = res.data
+      }).catch(err => {
+        this.$message.error(err.data.message)
+      })
+    },
+    submit() {
+      this.$http.post('/api/System/UpdateBaseConfig', this.form).then(res => {
+        this.$message.success(res.message)
+      }).catch(err => {
+        this.$message.error(err.data.message)
       })
     }
   },
   watch: {
   },
   mounted() {
-    // this.query()
+    this.query()
   },
 }
 </script>

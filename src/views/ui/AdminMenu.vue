@@ -65,7 +65,7 @@
         <el-menu-item style="padding-left:50px;" index="/withdrawal">提现列表</el-menu-item>
       </el-submenu>
       
-      <div class="line"></div>
+      <!-- <div class="line"></div>
 
       <template v-for="(item, index) in menus">
         <el-submenu :index="`sub_${index}`" :key="index" v-if="item.children.length">
@@ -82,7 +82,7 @@
           <i class="el-icon-location"></i>
           <span slot="title">{{ item.meta.title }}</span>
         </el-menu-item>
-      </template>
+      </template> -->
       
       
 
