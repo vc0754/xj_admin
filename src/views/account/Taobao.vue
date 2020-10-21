@@ -12,7 +12,7 @@
       <h3 class="section_title">授权账号信息</h3>
       
       <div class="authTaobao" v-if="!is_auth">
-        <el-button type="info">
+        <el-button type="info" @click="on_auth">
           <img src="../../assets/icon_tb.png" alt="">
           淘宝账号登录授权
         </el-button>
@@ -47,7 +47,8 @@ export default {
   components: {},
   data () {
     return {
-      is_auth: true,
+      is_auth: false,
+      url: '',
       tableData: [{
         date: '2016-05-02',
         name: '王小虎',
@@ -59,15 +60,35 @@ export default {
   },
   methods: {
     query () {
-      this.$http.post('/api/Home/GetTotalStatistics').then(res => {
+      // 获取淘宝授权信息
+      this.$http.post('/api/UserAuth/GetAliMaMaUserList').then(res => {
         console.log(res)
+      }).catch(err => {
+        this.$message.error(err.data.message)
+      })
+    },
+    on_auth() {
+      // 授权回调链接
+      this.$http.post('/api/UserAuth/GetRedirectUrl', { id: 0 }).then(res => {
+        this.url = res.data
+        this.is_auth = true
+      }).catch(err => {
+        this.$message.error(err.data.message)
+      })
+    },
+    on_channel_open() {
+      // 开启渠道模式
+      this.$http.post('/api/UserAuth/UpdateAliMaMaUser').then(res => {
+        console.log(res)
+      }).catch(err => {
+        this.$message.error(err.data.message)
       })
     }
   },
   watch: {
   },
   mounted () {
-    // this.query()
+    this.query()
   },
   beforeCreate() {
     document.getElementsByTagName('body')[0].className = `${document.getElementsByTagName('body')[0].className} setting_wrap`

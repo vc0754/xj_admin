@@ -9,17 +9,7 @@ const Layout = resolve => require(['@/layout/Layout.vue'], resolve)
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/home-page',
-    component: Layout,
-    children: [
-      {
-        path: '/home-page/dashboard-page',
-        meta: { title: '控制面板' },
-        component: () => import('@/views/MainView.vue')
-      }
-    ]
-  },
+  
   {
     path: '/',
     component: Layout,

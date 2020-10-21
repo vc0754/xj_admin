@@ -21,6 +21,8 @@
       </el-form>
     </div>
 
+    <pre>{{ form }}</pre>
+
   </section>
 </template>
 
@@ -47,11 +49,5 @@ export default {
   mounted() {
     // this.query()
   },
-  // beforeCreate() {
-  //   document.getElementsByTagName('body')[0].className = `${document.getElementsByTagName('body')[0].className} setting_wrap`
-  // },
-  // beforeDestroy() {
-  //   document.body.removeAttribute('class', 'setting_wrap')
-  // }
 }
 </script>

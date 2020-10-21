@@ -104,6 +104,28 @@ export default {
     query () {
       this.$http.post('/api/Authority/Menu').then(res => {
         this.menus = res.data
+
+        // let new_routes = []
+        // res.data.map(item => {
+        //   new_routes.push({
+        //     path: item.path,
+        //     meta: item.meta,
+        //     component: resolve => require(['@/layout/Layout.vue'], resolve)
+        //   })
+        // })
+        // let routes = new_routes.concat(this.$router.options.routes)
+        // this.$router.addRoutes({
+        //   path: '/home-page',
+        //   component: resolve => require(['@/layout/Layout.vue'], resolve),
+        //   children: [
+        //     {
+        //       path: '/home-page/dashboard-page',
+        //       meta: { title: '控制面板' },
+        //       component: resolve => require(['@/views/MainView.vue'], resolve)
+        //     }
+        //   ]
+        // })
+        // console.log(routes)
       })
     },
     handleOpen(key, keyPath) {

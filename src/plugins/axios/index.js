@@ -1,5 +1,6 @@
 import axios from 'axios'
 import promise from 'es6-promise'
+import querystring from 'querystring'
 
 promise.polyfill()
 
@@ -12,6 +13,11 @@ axios.defaults.baseURL = 'http://yyapi_test.xijiee.com'
 axios.interceptors.request.use(config => {
   const token = sessionStorage.getItem('token')
   if (token) config.headers['Token'] = `${token}`
+  
+  if (config.method === 'post' && config.data) config.url = `${config.url}?${querystring.stringify(config.data)}`
+
+  // console.log(config)
+
   return config
 }, error => {
   return Promise.reject(error)

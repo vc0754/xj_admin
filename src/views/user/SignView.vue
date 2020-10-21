@@ -46,11 +46,12 @@ export default {
   },
   data () {
     return {
-      identifyCodes: '1234567890',
+      identifyCodes: '23456890',
       identifyCode: '',
       formPSW: {
         username: '18800000111',
         pwd: '123456',
+        level_id: 1,
         captcha: ''
       },
       formValidatePSW: {
@@ -95,7 +96,7 @@ export default {
       this.$refs[name].validate(valid => {
         if (!valid) return; // this.$message.error('提交失败!');
         if (this.formPSW.captcha !== this.identifyCode) return this.$message.error('验证码不匹配!');
-        this.$http.post(`/api/Home/Login?username=${this.formPSW.username}&pwd=${this.formPSW.pwd}`, this.formPSW).then(res => {
+        this.$http.post(`/api/Home/Login?username=${this.formPSW.username}&pwd=${this.formPSW.pwd}&level_id=1`, this.formPSW).then(res => {
           sessionStorage.setItem('token', res.data.webToKen)
           this.$store.dispatch(USER_SIGNIN, res.data)
           this.$router.replace({ path: '/' })
