@@ -53,7 +53,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <router-link :to="`/user/detail?id=${scope.row.userId}`">明细</router-link>
+            <router-link :to="`/user/detail?id=${scope.row.userId}&name=${scope.row.nickName}`">明细</router-link>
           </template>
         </el-table-column>
       </el-table>
@@ -130,7 +130,6 @@ export default {
         this.statuses[2].num = res.data.count2
         this.statuses[3].num = res.data.count3
         this.loading = false
-        console.log(res)
       }).catch(err => {
         this.loading = false
         this.$message.error(err.data.message)

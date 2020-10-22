@@ -4,26 +4,30 @@
 
       <div class="sign-page" :style="{ backgroundImage: `url(${require('../../assets/login.png')})`}">
         <h1>忘记密码</h1>
-        <el-form class="sign-content" ref="formPSW" :model="formPSW" :rules="formValidatePSW">
-          <el-form-item prop="account">
-            <el-input v-model="formPSW.account" placeholder="请输入手机号" />
+        <el-form class="sign-content" ref="formPSW" :model="formPSW">
+          <el-form-item prop="mobile">
+            <el-input v-model="formPSW.mobile" placeholder="请输入手机号" />
+            <div class="getSMS">
+              <span v-if="count">{{ count }}s</span>
+              <span class="send" @click="getSMS" v-else>获取验证码</span>
+            </div>
           </el-form-item>
           
-          <el-form-item prop="password">
-            <el-input v-model="formPSW.password" placeholder="请输入验证码" :maxlength="6" />
+          <el-form-item prop="code">
+            <el-input v-model="formPSW.code" placeholder="请输入验证码" :maxlength="6" />
           </el-form-item>
 
-          <el-form-item prop="password">
-            <el-input type="password" v-model="formPSW.password" placeholder="设置新密码" :maxlength="6" />
+          <el-form-item prop="login_pwd">
+            <el-input type="password" v-model="formPSW.login_pwd" placeholder="设置新密码" :maxlength="6" />
           </el-form-item>
 
-          <el-form-item prop="password">
-            <el-input type="password" v-model="formPSW.password" placeholder="确认新密码" :maxlength="6" />
+          <el-form-item prop="login_pwd2">
+            <el-input type="password" v-model="formPSW.login_pwd2" placeholder="确认新密码" :maxlength="6" />
           </el-form-item>
         </el-form>
 
         <div class="sign-button">
-          <el-button type="primary" round :loading="loading" @click="handleSubmit('formPSW')">重置密码</el-button>
+          <el-button type="primary" round :loading="loading" @click="handleSubmit">重置密码</el-button>
         </div>
         
         <div class="sign-meta">
@@ -45,45 +49,46 @@ export default {
   data () {
     return {
       formPSW: {
-        account: '',
-        email: '',
         mobile: '',
-        password: '',
+        code: '',
+        login_pwd: '',
+        login_pwd2: '',
       },
-      formValidatePSW: {
-        account: [
-          { required: true, message: '账号必须', trigger: 'blur' },
-          // { type: 'string', min: 4, message: '账号长度最少4位', trigger: 'blur' },
-          // { pattern: /^[a-zA-Z0-9_.]*$/, message: '只允许英文字母，数字和下划线(_)和点符号(.)', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '密码必须', trigger: 'blur' },
-          // { type: 'string', min: 6, message: '密码长度最少6位', trigger: 'blur' }
-        ],
-        captcha: [
-          { required: true, message: '验证码必须', trigger: 'blur' },
-        ]
-      },
-      loading: false
+      loading: false,
+      timeID: 0,
+      count: 0
     }
   },
-  computed: {
-  },
   methods: {
-
+    getSMS() {
+      if (!this.formPSW.mobile) return this.$message.error('手机号码必须')
+      this.$http.post('/api/UserInfo/SendSms', {
+        mobile: this.formPSW.mobile
+      }).then(res => {
+        this.count = 30
+        this.timeID = setInterval(() => {
+          --this.count
+          if (this.count <= 0) clearInterval(this.timeID)
+        }, 1000)
+        console.log(res)
+      }).catch(err => {
+        this.$message.error(err.data.message)
+      })
+    },
     // 提交表单
-    handleSubmit (name) {
-      console.log(name)
-      this.$message.info('重置密码')
-      // this.$refs[name].validate(valid => {
-      //   if (!valid) return; // this.$message.error('提交失败!');
-      //   this.$http.post('/api/Home/Login', this.formPSW).then(res => {
-      //     this.$store.dispatch(USER_SIGNIN, res)
-      //     this.$router.replace({ path: '/' })
-      //   }).catch(err => {
-      //     this.$message.error(err.data.message)
-      //   })
-      // })
+    handleSubmit () {
+      if (!this.formPSW.mobile) return this.$message.error('手机号码必须')
+      if (!this.formPSW.code) return this.$message.error('验证码必须')
+      if (!this.formPSW.login_pwd) return this.$message.error('密码必须')
+      if (!this.formPSW.login_pwd2) return this.$message.error('确认新密码')
+      if (this.formPSW.login_pwd2 !== this.formPSW.login_pwd2) return this.$message.error('两次密码不一致')
+      
+      this.$http.post('/api/UserInfo/UpdatePwd', this.formPSW).then(res => {
+        console.log(res)
+        this.$message.success('修改成功')
+      }).catch(err => {
+        this.$message.error(err.data.message)
+      })
     },
   },
   watch: {
@@ -143,6 +148,14 @@ export default {
     a {
       color: #EC4B4B;
     }
+  }
+
+  .getSMS {
+    span.send {
+      color: #EC4B4B;
+      cursor: pointer;
+    }
+    position: absolute; right: 20px; top: 0px;
   }
 }
 </style>

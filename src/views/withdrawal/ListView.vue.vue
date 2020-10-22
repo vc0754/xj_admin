@@ -27,34 +27,47 @@
       </el-tabs>
       
       <el-table stripe :data="items" v-loading="loading" style="width: 100%">
-        <el-table-column prop="NickName" label="用户昵称" width="150"></el-table-column>
-        <el-table-column prop="Phone" label="手机号" width="140"></el-table-column>
-        <el-table-column prop="Alipay" label="支付宝账号" width="150"></el-table-column>
-        <el-table-column prop="UserName" label="姓名" width="130"></el-table-column>
-        <el-table-column prop="Amount" label="提现金额" width="140"></el-table-column>
-        <el-table-column prop="TiXianTypeName" label="提现类型" width="150"></el-table-column>
-        <el-table-column prop="AlipayOrderNo" label="支付宝交易号" width="165"></el-table-column>
-        <el-table-column prop="Istate" label="提现状态" width="90"></el-table-column>
+        <el-table-column prop="nickName" label="用户昵称" width="150"></el-table-column>
+        <el-table-column prop="phone" label="手机号" width="140"></el-table-column>
+        <el-table-column prop="alipay" label="支付宝账号" width="150"></el-table-column>
+        <el-table-column prop="userName" label="姓名" width="130"></el-table-column>
+
+        <el-table-column label="提现金额" width="140">
+          <template slot-scope="scope">
+            {{ scope.row.amount | fixed2 }}元
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="tiXianTypeName" label="提现类型" width="150"></el-table-column>
+        <el-table-column prop="alipayOrderNo" label="支付宝交易号" width="165"></el-table-column>
+
+        <el-table-column label="提现状态" width="90">
+          <template slot-scope="scope">
+            {{ scope.row.istate == 1 ? '提现成功' : scope.row.istate == 2 ? '驳回' : '申请中' }}
+          </template>
+        </el-table-column>
 
         <el-table-column label="申请提现时间" width="140">
           <template slot-scope="scope">
-            {{ scope.row.CreateDateTime | date }}
+            {{ scope.row.createDateTime | date }}
           </template>
         </el-table-column>
 
         <el-table-column label="处理时间" width="140">
           <template slot-scope="scope">
-            {{ scope.row.OperateTime | date }}
+            {{ scope.row.operateTime }}
           </template>
         </el-table-column>
 
         <el-table-column label="操作" min-width="140">
           <template slot-scope="scope">
             <div class="blockspan">
-              <span @click="modify(scope.row.TiXianBuyerRecordId)">修改支付宝交易号</span>
-              <span @click="payment(scope.row.TiXianBuyerRecordId)">打款</span>
-              <span class="m-l-15" @click="reject(scope.row.TiXianBuyerRecordId)">驳回</span>
-              <router-link :to="`/withdrawal/detail?id=${scope.row.UserBuyerId}`">提现记录</router-link>
+              <span @click="modify(scope.row.tiXianBuyerRecordId)" v-if="scope.row.istate == 1">修改支付宝交易号</span>
+              <template v-if="scope.row.istate == 0">
+                <span @click="payment(scope.row.tiXianBuyerRecordId)">打款</span>
+                <span class="m-l-15" @click="reject(scope.row.tiXianBuyerRecordId)">驳回</span>
+              </template>
+              <router-link :to="`/withdrawal/detail?id=${scope.row.userBuyerId}&name=${scope.row.nickName}`">提现记录</router-link>
             </div>
           </template>
         </el-table-column>
@@ -202,6 +215,7 @@ export default {
       return val.toFixed(2)
     },
     date(val) {
+      if (val == '---') return val
       return moment(val).format('YYYY-MM-DD HH:mm')
     }
   },
@@ -213,21 +227,21 @@ export default {
       this.dialogVisibleModify = true
     },
     reject(id) {
-      let item = this.items.find(item => item.TiXianBuyerRecordId === id)
+      let item = this.items.find(item => item.tiXianBuyerRecordId === id)
       this.form_reject.id = id
-      this.form_reject.alipay = item.Alipay
-      this.form_reject.amount = item.Amount
-      this.form_reject.name = item.UserName
-      this.form_reject.nickname = item.NickName
+      this.form_reject.alipay = item.alipay
+      this.form_reject.amount = item.amount
+      this.form_reject.name = item.userName
+      this.form_reject.nickname = item.nickName
       this.dialogVisibleReject = true
     },
     payment(id) {
-      let item = this.items.find(item => item.TiXianBuyerRecordId === id)
+      let item = this.items.find(item => item.tiXianBuyerRecordId === id)
       this.form_payment.id = id
-      this.form_payment.alipay = item.Alipay
-      this.form_payment.amount = item.Amount
-      this.form_payment.name = item.UserName
-      this.form_payment.nickname = item.NickName
+      this.form_payment.alipay = item.alipay
+      this.form_payment.amount = item.amount
+      this.form_payment.name = item.userName
+      this.form_payment.nickname = item.nickName
       this.dialogVisiblePayment = true
     },
     handleClose() {
@@ -252,9 +266,9 @@ export default {
         this.items = res.data.items
         this.totalNum = res.data.totalNum
         this.statuses[0].num = res.data.allCount
-        this.statuses[1].num = res.data.count1
-        this.statuses[2].num = res.data.count2
-        this.statuses[3].num = res.data.count3
+        this.statuses[1].num = res.data.count0
+        this.statuses[2].num = res.data.count1
+        this.statuses[3].num = res.data.count2
         this.loading = false
       }).catch(err => {
         this.loading = false
@@ -280,6 +294,7 @@ export default {
       }).then(res => {
         this.dialogVisibleModify = false
         this.$message.success(res.message)
+        this.query()
       }).catch(err => {
         // this.loading = false
         this.$message.error(err.data.message)
@@ -292,6 +307,7 @@ export default {
       }).then(res => {
         this.dialogVisiblePayment = false
         this.$message.success(res.message)
+        this.query()
       }).catch(err => {
         // this.loading = false
         this.$message.error(err.data.message)
@@ -304,6 +320,7 @@ export default {
       }).then(res => {
         this.dialogVisibleReject = false
         this.$message.success(res.message)
+        this.query()
       }).catch(err => {
         // this.loading = false
         this.$message.error(err.data.message)

@@ -4,7 +4,7 @@
       <span>当前位置：</span>
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>订单管理</el-breadcrumb-item>
-        <el-breadcrumb-item>拼多多订单</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ channel_name }}订单</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
 
@@ -47,16 +47,38 @@
       </el-tabs>
       
       <el-table stripe :data="items" v-loading="loading" style="width: 100%">
-        <el-table-column prop="ParentOrderNumber" label="订单号" width="180"></el-table-column>
-        <el-table-column prop="GoodsInfo" label="商品标题" width="260"></el-table-column>
-        <el-table-column prop="PaymentMoney" label="付款金额" width="120"></el-table-column>
-        <el-table-column prop="SettlementAmount" label="税后佣金" width="120"></el-table-column>
-        <el-table-column prop="CommissionRate" label="佣金比例" width="120"></el-table-column>
-        <el-table-column prop="UserMoney" label="自购佣金" width="120"></el-table-column>
-        <el-table-column prop="NickName" label="自购用户" width="150"></el-table-column>
-        <el-table-column prop="OrderState" label="订单状态" width="116"></el-table-column>
-        <el-table-column prop="CreateDateTime" label="付款时间" width="170"></el-table-column>
-        <el-table-column prop="SettlementTime" label="结算时间"></el-table-column>
+        <el-table-column prop="parentOrderNumber" label="订单号" width="180"></el-table-column>
+        <el-table-column prop="goodsInfo" label="商品标题" width="260"></el-table-column>
+
+        <el-table-column label="付款金额" width="120">
+          <template slot-scope="scope">
+            {{ scope.row.paymentMoney | fixed2 }}元
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="settlementAmount" label="税后佣金" width="120"></el-table-column>
+        <el-table-column prop="commissionRate" label="佣金比例" width="120"></el-table-column>
+
+        <el-table-column label="自购佣金" width="120">
+          <template slot-scope="scope">
+            {{ scope.row.userMoney | fixed2 }}元
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="nickName" label="自购用户" width="150"></el-table-column>
+        <el-table-column prop="orderState" label="订单状态" width="116"></el-table-column>
+
+        <el-table-column label="付款时间" min-width="170">
+          <template slot-scope="scope">
+            {{ scope.row.createDateTime | date }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="结算时间" min-width="170">
+          <template slot-scope="scope">
+            {{ scope.row.settlementTime | date }}
+          </template>
+        </el-table-column>
       </el-table>
       
       <div class="flex flex-x-right p-t-40 p-b-10">
@@ -69,6 +91,8 @@
         </el-pagination>
       </div>
     </div>
+
+    <!-- <pre>{{ items }}</pre> -->
   </section>
 </template>
 
@@ -106,13 +130,17 @@ export default {
       return val.toFixed(2)
     },
     date(val) {
-      return moment(val).format('YYYY-MM-DD HH:mm')
+      // return moment(val).format('YYYY-MM-DD HH:mm')
+      return val
     }
   },
   computed: {
     channel_id() {
       return this.$route.query.channel_id || 1
       // TaoBao = 1,JDCOM = 2,PinDuoDuo = 3
+    },
+    channel_name() {
+      return this.channel_id == 1 ? '淘宝' : this.channel_id == 2 ? '拼多多' : '京东'
     }
   },
   methods: {
@@ -137,7 +165,7 @@ export default {
         this.statuses[2].num = res.data.count2
         this.statuses[3].num = res.data.count3
         this.loading = false
-        console.log(res)
+        // console.log(res)
       }).catch(err => {
         this.loading = false
         this.$message.error(err.data.message)

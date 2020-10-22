@@ -26,10 +26,31 @@
       </el-tabs>
       
       <el-table stripe :data="items" v-loading="loading" style="width: 100%">
-        <el-table-column prop="totalDealAmount" label="总成交额" width="180"></el-table-column>
-        <el-table-column prop="totalCommission" label="总佣金" width="180"></el-table-column>
-        <el-table-column prop="subsidiaryNeedPayCommission" label="团队获得佣金"></el-table-column>
-        <el-table-column prop="subsidiaryProfit" label="获得利润"></el-table-column>
+
+        <el-table-column label="总成交额" width="180">
+          <template slot-scope="scope">
+            {{ scope.row.totalDealAmount | fixed2 }}元
+          </template>
+        </el-table-column>
+
+        <el-table-column label="总佣金" width="180">
+          <template slot-scope="scope">
+            {{ scope.row.totalCommission | fixed2 }}元
+          </template>
+        </el-table-column>
+
+        <el-table-column label="团队获得佣金">
+          <template slot-scope="scope">
+            {{ scope.row.subsidiaryNeedPayCommission | fixed2 }}元
+          </template>
+        </el-table-column>
+
+        <el-table-column label="获得利润">
+          <template slot-scope="scope">
+            {{ scope.row.subsidiaryProfit | fixed2 }}元
+          </template>
+        </el-table-column>
+
         <el-table-column prop="totalOrdersCount" label="结算订单数"></el-table-column>
         <el-table-column prop="dateRange" label="日期" min-width="100"></el-table-column>
       </el-table>
@@ -70,6 +91,12 @@ export default {
       total: 0,
       items: [],
       loading: false
+    }
+  },
+  filters: {
+    fixed2(val) {
+      if (!val) return 0
+      return val.toFixed(2)
     }
   },
   computed: {

@@ -7,34 +7,44 @@
         <el-breadcrumb-item>提现列表</el-breadcrumb-item>
         <el-breadcrumb-item>提现记录</el-breadcrumb-item>
       </el-breadcrumb>
-      <span>返回</span>
+      <span class="goback m-l-10" @click="goback">返回</span>
     </div>
 
     <div class="formTable bg-white" style="padding: 30px 60px;">
-      <h2>嘻街用户002（13656434586）的提现记录</h2>
+      <h2>{{ user.nickName }}（{{ user.phone }}）的提现记录</h2>
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane :label="`${item.label}（${item.num}）`" :name="`tab${item.value}`" v-for="(item, index) in statuses" :key="index"></el-tab-pane>
       </el-tabs>
       
       <el-table stripe :data="items" v-loading="loading" style="width: 100%">
-        <el-table-column prop="NickName" label="用户名" width="252"></el-table-column>
-        <el-table-column prop="Remark" label="提现类型" width="220"></el-table-column>
-        <el-table-column prop="Amount" label="提现金额" width="220"></el-table-column>
-        <el-table-column prop="AlipayOrderNo" label="支付宝交易订单号" width="240"></el-table-column>
+        <el-table-column prop="nickName" label="用户名" width="252"></el-table-column>
+        <el-table-column prop="tiXianTypeName" label="提现类型" width="220"></el-table-column>
+
+        <el-table-column label="提现金额" width="220">
+          <template slot-scope="scope">
+            {{ scope.row.amount | fixed2 }}元
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="alipayOrderNo" label="支付宝交易订单号" width="240"></el-table-column>
 
         <el-table-column label="申请时间" width="200">
           <template slot-scope="scope">
-            {{ scope.row.CreateDateTime | date }}
+            {{ scope.row.createDateTime | date }}
           </template>
         </el-table-column>
 
         <el-table-column label="处理时间" width="200">
           <template slot-scope="scope">
-            {{ scope.row.OperateTime | date }}
+            {{ scope.row.operateTime }}
           </template>
         </el-table-column>
 
-        <el-table-column prop="Istate" label="提现状态" width="180"></el-table-column>
+        <el-table-column label="提现状态" width="180">
+          <template slot-scope="scope">
+            {{ scope.row.istate == 1 ? '提现成功' : scope.row.istate == 2 ? '驳回' : '申请中' }}
+          </template>
+        </el-table-column>
       </el-table>
 
       <div class="flex flex-x-right p-t-40 p-b-10">
@@ -63,6 +73,7 @@ export default {
         input: '',
         region: '',
       },
+      user: {},
       activeName: 'tab-1',
       statuses: [
         { label: '全部', value: -1, num: 0 },
@@ -89,9 +100,22 @@ export default {
   computed: {
     id() {
       return this.$route.query.id
+    },
+    name() {
+      return this.$route.query.name
     }
   },
   methods: {
+    goback() {
+      this.$router.go(-1)
+    },
+    queryUser() {
+      this.$http.post('/api/UserInfo/GetUserList', {
+        NickName: this.name
+      }).then(res => {
+        this.user = res.data.items[0]
+      })
+    },
     query () {
       this.loading = true
       let params = {
@@ -113,7 +137,7 @@ export default {
         this.statuses[3].num = res.data.count3
         this.loading = false
       }).catch(err => {
-      this.loading = false
+        this.loading = false
         this.$message.error(err.message)
       })
     },
@@ -135,6 +159,7 @@ export default {
   },
   mounted () {
     this.query()
+    this.queryUser()
   }
 }
 </script>

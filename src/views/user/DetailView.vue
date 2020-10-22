@@ -9,15 +9,21 @@
     </div>
 
     <div class="formTable bg-white" style="padding: 30px 60px;">
-      <h2>嘻街用户002（13656434586）的提现记录</h2>
+      <h2>{{ user.nickName }}（{{ user.phone }}）的提现记录</h2>
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="订单明细" name="tab1">
           <el-table stripe :data="tableData.tab1.items" v-loading="loading" style="width: 100%">
-            <el-table-column prop="NickName" label="用户名" width="293"></el-table-column>
-            <el-table-column prop="OrderRemark" label="订单说明" width="380"></el-table-column>
-            <el-table-column prop="SettlementAmount" label="佣金" width="280"></el-table-column>
-            <el-table-column prop="CreateDateTime" label="付款时间" width="300"></el-table-column>
-            <el-table-column prop="OrderState" label="订单状态"></el-table-column>
+            <el-table-column prop="nickName" label="用户名" width="293"></el-table-column>
+            <el-table-column prop="orderRemark" label="订单说明" width="380"></el-table-column>
+
+            <el-table-column label="佣金" width="280">
+              <template slot-scope="scope">
+                {{ scope.row.settlementAmount | fixed2 }}元
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="createDateTime" label="付款时间" width="300"></el-table-column>
+            <el-table-column prop="orderState" label="订单状态"></el-table-column>
           </el-table>
           
           <div class="flex flex-x-right p-t-40 p-b-10">
@@ -35,14 +41,24 @@
         </el-tab-pane>
         <el-tab-pane label="用户提现" name="tab2">
           <el-table stripe :data="tableData.tab2.items" v-loading="loading" style="width: 100%">
-            <el-table-column prop="NickName" label="用户名" width="200"></el-table-column>
-            <el-table-column prop="TiXianTypeName" label="提现类型" width="200"></el-table-column>
-            <el-table-column prop="Amount" label="提现金额" width="200"></el-table-column>
-            <el-table-column prop="AlipayOrderNo" label="支付宝交易订单号" width="210"></el-table-column>
-            <el-table-column prop="CreateDateTime" label="申请时间" width="170"></el-table-column>
-            <el-table-column prop="OperateTime" label="处理时间" width="170"></el-table-column>
-            <el-table-column prop="Istate" label="提现状态" width="180"></el-table-column>
-            <el-table-column prop="Remark" label="拒绝理由"></el-table-column>
+            <el-table-column prop="nickName" label="用户名" width="200"></el-table-column>
+            <el-table-column prop="tiXianTypeName" label="提现类型" width="200"></el-table-column>
+
+            <el-table-column label="提现金额" width="200">
+              <template slot-scope="scope">
+                {{ scope.row.amount | fixed2 }}元
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="alipayOrderNo" label="支付宝交易订单号" width="210"></el-table-column>
+            <el-table-column prop="createDateTime" label="申请时间" width="170"></el-table-column>
+            <el-table-column prop="operateTime" label="处理时间" width="170"></el-table-column>
+            <el-table-column label="提现状态" width="180">
+              <template slot-scope="scope">
+                {{ scope.row.istate == 1 ? '提现成功' : scope.row.istate == 2 ? '驳回' : '申请中' }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="remark" label="拒绝理由"></el-table-column>
           </el-table>
           
           <div class="flex flex-x-right p-t-40 p-b-10">
@@ -65,11 +81,13 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'UserDetailView',
   components: {},
   data () {
     return {
+      user: {},
       activeName: 'tab1',
       loading: false,
       tableData: {
@@ -90,12 +108,34 @@ export default {
       }
     }
   },
+  filters: {
+    fixed2(val) {
+      if (!val) return 0
+      return val.toFixed(2)
+    },
+    date(val) {
+      return moment(val).format('YYYY-MM-DD HH:mm')
+    }
+  },
   computed: {
     id() {
       return parseInt(this.$route.query.id)
+    },
+    name() {
+      return this.$route.query.name
     }
   },
   methods: {
+    goback() {
+      this.$router.go(-1)
+    },
+    queryUser() {
+      this.$http.post('/api/UserInfo/GetUserList', {
+        NickName: this.name
+      }).then(res => {
+        this.user = res.data.items[0]
+      })
+    },
     query() {
       this.loading = true
       this.$http.post('/api/Order/GetUserOrdersPage', {
@@ -103,7 +143,9 @@ export default {
         page: this.tableData.tab1.currentPage,
         pageSize: this.tableData.tab1.pageSize
       }).then(res => {
-        console.log(res)
+        this.$set(this.tableData.tab1, 'items', res.data.items)
+        this.$set(this.tableData.tab1, 'totalNum', res.data.totalNum)
+        // console.log(res)
         this.loading = false
       }).catch(err => {
         this.loading = false
@@ -162,6 +204,7 @@ export default {
   },
   mounted () {
     this.query()
+    this.queryUser()
   }
 }
 </script>

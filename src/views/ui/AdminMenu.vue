@@ -44,8 +44,8 @@
           <span>订单管理</span>
         </template> 
         <el-menu-item style="padding-left:50px;" index="/orders?channel_id=1">淘宝订单</el-menu-item>
-        <el-menu-item style="padding-left:50px;" index="/orders?channel_id=2">拼多多订单</el-menu-item>
-        <el-menu-item style="padding-left:50px;" index="/orders?channel_id=3">京东订单</el-menu-item>
+        <el-menu-item style="padding-left:50px;" index="/orders?channel_id=3">拼多多订单</el-menu-item>
+        <el-menu-item style="padding-left:50px;" index="/orders?channel_id=2">京东订单</el-menu-item>
       </el-submenu>
 
       <el-submenu index="6">

@@ -71,12 +71,22 @@
       </el-row>
     </div>
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="relative">
       <!-- 流量趋势 -->
       <div ref="echart_wrap" class="echart_wrap"></div>
+      <ul class="echart_tip">
+        <li>
+          <div class="icon"></div>
+          <span>新增注册量</span>
+        </li>
+        <li>
+          <div class="icon"></div>
+          <span>订单数量</span>
+        </li>
+      </ul>
     </el-card>
     
-    <!-- <pre>{{ data }}</pre> -->
+    <!-- <pre>{{ xAxis_data }}</pre> -->
   </section>
 </template>
 
@@ -94,11 +104,30 @@ export default {
     }
   },
   computed: {
+    xAxis_data() {
+      let items = this.data.dayStatistics.map(item => {
+        return item.day.substring(5)
+      })
+      return items
+    },
+    series_data_1() {
+      let items = this.data.dayStatistics.map(item => {
+        return item.list[0].count
+      })
+      return items
+    },
+    series_data_2() {
+      let items = this.data.dayStatistics.map(item => {
+        return item.list[1].count
+      })
+      return items
+    }
   },
   methods: {
     query () {
       this.$http.post('/api/Home/GetTotalStatistics').then(res => {
         this.data = res.data
+        this.initCharts()
       }).catch(err => {
         this.$message.error(err.data.message)
       })
@@ -122,26 +151,17 @@ export default {
           left: 'left',
           text: '流量趋势',
         },
-        // toolbox: {
-        //   feature: {
-        //     dataZoom: {
-        //       yAxisIndex: 'none'
-        //     },
-        //     restore: {},
-        //     saveAsImage: {}
-        //   }
-        // },
         tooltip: {
           trigger: 'axis'
         },
-        legend: {
-          textStyle: {
-            color: '#FFFFF99'
-          },
-          icon: 'roundRect'
-        },
+        // legend: {
+        //   textStyle: {
+        //     color: '#FFFFF99'
+        //   },
+        //   icon: 'roundRect'
+        // },
         xAxis: {
-          data: [],
+          data: this.xAxis_data,
           axisLine: {
             lineStyle: {
               color: '#cccccc'
@@ -149,8 +169,7 @@ export default {
           },
           // name: '年-月'
           // type: 'category',
-          // boundaryGap: false,
-          // data: date
+          // boundaryGap: false
         },
         yAxis: {
           type: 'value',
@@ -167,357 +186,28 @@ export default {
           }
         },
         grid: {
-          top: 46,
+          top: 86,
           left: 46,
           right: 46,
           bottom: "10%"
         },
-        // dataZoom: [
-        //   {
-        //     type: 'inside',
-        //     start: 0,
-        //     end: 10
-        //   },
-        //   {
-        //     start: 0,
-        //     end: 10,
-        //     handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-        //     handleSize: '80%',
-        //     handleStyle: {
-        //       color: '#fff',
-        //       shadowBlur: 3,
-        //       shadowColor: 'rgba(0, 0, 0, 0.6)',
-        //       shadowOffsetX: 2,
-        //       shadowOffsetY: 2
-        //     }
-        //   }
-        // ],
-        // series: [
-        //   {
-        //     name: '模拟数据',
-        //     type: 'line',
-        //     smooth: true,
-        //     symbol: 'none',
-        //     sampling: 'average',
-        //     itemStyle: {
-        //       color: 'rgb(255, 70, 131)'
-        //     },
-        //     areaStyle: {
-        //       color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-        //         {
-        //           offset: 0,
-        //           color: 'rgb(255, 158, 68)'
-        //         },
-        //         {
-        //           offset: 1,
-        //           color: 'rgb(255, 70, 131)'
-        //         }
-        //       ])
-        //     },
-        //     data: data
-        //   }
-        // ]
         series: [
           {
             type: 'line',
             smooth: true,
             name: '新增注册量',
             color: '#9956FB',
-            data: [
-              176004,
-              109944,
-              111600,
-              104418,
-              86202,
-              158004,
-              140004,
-              122004,
-              90414,
-              128302,
-              158004,
-              212004
-            ]
+            data: this.series_data_1
           },
           {
             type: 'line',
             smooth: true,
             name: '订单数量',
             color: '#EC4BD6',
-            data: [
-              70220,
-              61290,
-              52060,
-              46050,
-              33520,
-              105530,
-              77510,
-              79400,
-              34660,
-              45940,
-              42520,
-              21477
-            ]
+            data: this.series_data_2
           },
         ]
       })
-    },
-    initChartsLine() {
-      let _self = this;
-      // 配置对象
-      let optionData = {};
-      let boundaryGap =
-          _self.dataObj.boundaryGap === false ? false : true;
-      let colorArray = _self.colorArray;
-      // 配置项
-      let seriesObj = [];
-      if (_self.dataObj && _self.dataObj.data) {
-          _self.dataObj.data.forEach((element, index) => {
-            let m = index % colorArray.length;
-            let tempArray = {
-              name: _self.dataObj.nameArray[index],
-              data: element,
-              type: _self.dataObj.type ? _self.dataObj.type : "line",
-              smooth: _self.dataObj.smooth,
-              areaStyle: {
-                normal: {
-                  color: {
-                    type: "linear",
-                    x: 0,
-                    y: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [
-                      {
-                        offset: 0,
-                        color: colorArray[m] + "3F" // 0% 处的颜色
-                      },
-                      {
-                        offset: 1,
-                        color: colorArray[m] + "00" // 100% 处的颜色
-                      }
-                    ],
-                    globalCoord: false // 缺省为 false
-                  }
-                }
-              }
-            };
-            seriesObj.push(tempArray);
-          });
-      } else if (_self.dataObj.series) {
-        seriesObj = Object.assign(seriesObj, _self.dataObj.series);
-      }
-      // X轴
-
-      let xAxis = [];
-      if (_self.dataObj.xTitle) {
-        xAxis = {
-          type: "category",
-          data: _self.dataObj.xTitle,
-          boundaryGap: boundaryGap,
-          axisLabel: {
-            interval: 0,
-            rotate: _self.dataObj.titleRotate
-              ? _self.dataObj.titleRotate
-              : 0
-          },
-          axisLine: {
-            lineStyle: {
-              color: "rgba(0, 0, 0, 0.45)"
-            }
-          }
-        };
-      } else if (_self.dataObj.xAxis) {
-        xAxis = Object.assign(xAxis, _self.dataObj.xAxis);
-      }
-
-      // Y轴
-      let yAxis = [];
-      if (_self.dataObj.yAxis) {
-        yAxis = Object.assign(yAxis, _self.dataObj.yAxis);
-      } else {
-        yAxis = {
-          type: "value",
-          axisLine: {
-            lineStyle: {
-              color: "rgba(0, 0, 0, 0.45)"
-            }
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              //设置刻度线粗度(粗的宽度)
-              width: 1,
-              //颜色数组，数组数量要比刻度线数量大才能不循环使用
-              color: [
-                "rgba(0, 0, 0, 0)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)",
-                "rgba(0, 0, 0, 0.15)"
-              ]
-            }
-          }
-        };
-      }
-
-      let visualMap = null;
-      if (_self.dataObj.visualMap) visualMap = Object.assign(visualMap, _self.dataObj.visualMap);
-
-      let tooltip = { trigger: "axis" };
-      if (_self.dataObj.tooltip) tooltip = Object.assign(tooltip, _self.dataObj.tooltip);
-
-      let legend = { left: 0 };
-      if (_self.dataObj.legend) legend = Object.assign(legend, _self.dataObj.legend);
-      // 标题
-      let title = {};
-      if (_self.dataObj.title) title = Object.assign(title, _self.dataObj.title);
-
-      // 显示范围
-      let grid = {
-        // 间距
-        top: "5%",
-        left: "2%",
-        right: "2%",
-        bottom: "3%",
-        containLabel: true
-      };
-      if (title !== {}) grid.top = "25%";
-
-      optionData = {
-        // 基础配置
-        title: title,
-        xAxis: xAxis,
-        yAxis: yAxis,
-        visualMap: visualMap,
-        tooltip: tooltip,
-        legend: legend,
-        grid: grid,
-        color: colorArray,
-        series: seriesObj
-      };
-
-      _self.myChart.setOption(optionData);
-    },
-    initChartsPie() {
-        let _self = this;
-        // 配置对象
-        let optionData = {};
-        let colorArray = _self.colorArray;
-        // 配置项
-        let seriesObj = [];
-        let tempArray = {
-            type: "pie",
-            name: _self.dataObj.name,
-            radius: _self.dataObj.radius,
-            center: _self.dataObj.center,
-            roseType: _self.dataObj.roseType,
-            label: _self.dataObj.label,
-            data: _self.dataObj.data,
-            areaStyle: {
-                normal: {
-                    color: {
-                        type: "linear",
-                        x: 0,
-                        y: 0,
-                        x2: 0,
-                        y2: 1,
-                        colorStops: [
-                            {
-                                offset: 0,
-                                color: colorArray[0] + "3F" // 0% 处的颜色
-                            },
-                            {
-                                offset: 1,
-                                color: colorArray[0] + "00" // 100% 处的颜色
-                            }
-                        ],
-                        globalCoord: false // 缺省为 false
-                    }
-                }
-            },
-            animationType: "scale",
-            animationEasing: "elasticOut",
-            animationDelay: function() {
-                return Math.random() * 200;
-            }
-        };
-        seriesObj.push(tempArray);
-
-        let tooltip = {
-            trigger: "item",
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        };
-        if (_self.dataObj.tooltip) {
-            tooltip = Object.assign(tooltip, _self.dataObj.tooltip);
-        }
-
-        // 标题
-        let title = {};
-        if (_self.dataObj.title) {
-            title = Object.assign(title, _self.dataObj.title);
-        }
-
-        // 视觉加阴影
-        let visualMap = {
-            show: false,
-            min: 80,
-            max: 600,
-            inRange: {
-                // colorLightness: [0, 1]
-            }
-        };
-        if (_self.dataObj.visualMap) {
-            visualMap = Object.assign(visualMap, _self.dataObj.visualMap);
-        }
-
-        // 筛选
-        let legendData = [];
-        _self.dataObj.data.forEach(element => {
-            legendData.push(element.name);
-        });
-        let legend = {
-            orient: "vertical",
-            x: "left",
-            data: legendData
-        };
-        if (_self.dataObj.legend) {
-            legend = Object.assign(legend, _self.dataObj.legend);
-        }
-
-        // 显示范围
-        let grid = {
-            // 间距
-            top: "5%",
-            left: "2%",
-            right: "2%",
-            bottom: "3%",
-            containLabel: true
-        };
-        if (title !== {}) {
-            grid.top = "25%";
-        }
-
-        optionData = {
-            // 基础配置
-            title: title,
-            tooltip: tooltip,
-            legend: legend,
-            visualMap: visualMap,
-            grid: grid,
-            color: colorArray,
-            series: seriesObj
-        };
-
-        _self.myChart.setOption(optionData);
     },
     onResize() {
       if (this.charts) this.charts.resize()
@@ -532,9 +222,9 @@ export default {
   },
   mounted () {
     this.query()
-    this.$nextTick(() => {
-      this.initCharts()
-    })
+    // this.$nextTick(() => {
+    //   this.initCharts()
+    // })
     window.addEventListener("resize", this.onResize, false)
   },
   beforeCreate () {
@@ -549,5 +239,48 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.relative { position: relative;}
 .echart_wrap { height: 480px;}
+.echart_tip {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 12px;
+  position: absolute; top: 31px; right: 46px;
+  display: flex;
+  li {
+    margin-right: 20px;
+    display: flex; align-items: center;
+    &:first-child .icon {
+      &::before {
+        background: #9956FB;
+      }
+      &::after {
+        background: #9956FB;
+      }
+    }
+    &:last-child .icon {
+      &::before {
+        background: #EC4BD6;
+      }
+      &::after {
+        background: #EC4BD6;
+      }
+    }
+  }
+  .icon {
+    position: relative; padding: 0 15px;
+    &::before {
+      content: '';
+      width: 26px; height: 2px; display: block;
+      border-radius: 1px;
+      position: absolute; top: 50%; left: 50%; z-index: 0;
+      transform: translate3d(-50%, -50%, 0);
+    }
+    &::after {
+      content: '';
+      width: 12px; height: 12px; display: block;
+      border: 2px solid #fff; border-radius: 50%;
+      position: relative; z-index: 1;
+    }
+  }
+}
 </style>
