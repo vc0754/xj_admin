@@ -10,18 +10,19 @@
 
     <el-form ref="form" :model="form" label-width="85px" class="formDaterange bg-white flex flex-x-between flex-y-bottom">
       <div class="flex-grow">
-        <div class="flex">
-          <el-form-item label="订单编号：">
-            <el-input v-model="form.input" placeholder="请输入订单编号" style="width:260px;"></el-input>
+        <div class="flex flex-wrap">
+          <el-form-item label="订单编号：" class="m-r-20">
+            <el-input v-model="form.sn" placeholder="请输入订单编号" style="width:260px;"></el-input>
           </el-form-item>
           
-          <el-form-item label="商品标题：" class="m-l-20">
-            <el-input v-model="form.input" placeholder="请输入商品标题" style="width:260px;"></el-input>
+          <el-form-item label="商品标题：" class="m-r-20">
+            <el-input v-model="form.name" placeholder="请输入商品标题" style="width:260px;"></el-input>
           </el-form-item>
           
-          <el-form-item label="下单用户：" class="m-l-20">
+          <el-form-item label="下单用户：">
             <el-select v-model="form.region" style="width:105px;">
-              <el-option label="用户昵称" value="shanghai"></el-option>
+              <el-option label="用户昵称" value="nickName"></el-option>
+              <el-option label="手机号码" value="phone"></el-option>
             </el-select>
             <el-input v-model="form.input" placeholder="请输入内容" style="width:260px;"></el-input>
           </el-form-item>
@@ -30,109 +31,135 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="付款时间：" style="margin: 0;">
-              <el-date-picker v-model="date" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期">
+              <el-date-picker v-model="form.date" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期">
               </el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
 
       </div>
-      <el-button type="primary" round>搜索</el-button>
+      <el-button type="primary" round @click="query">搜索</el-button>
     </el-form>
 
     <div class="formTable bg-white" style="padding: 30px 60px;">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="所有订单（10）" name="tab1">
-          <el-table stripe :data="tableData" style="width: 100%">
-            <el-table-column prop="date" label="订单号" width="180"></el-table-column>
-            <el-table-column prop="name" label="商品标题" width="260"></el-table-column>
-            <el-table-column prop="address" label="付款金额" width="120"></el-table-column>
-            <el-table-column prop="address" label="税后佣金" width="120"></el-table-column>
-            <el-table-column prop="address" label="佣金比例" width="120"></el-table-column>
-            <el-table-column prop="address" label="自购佣金" width="120"></el-table-column>
-            <el-table-column prop="address" label="自购用户" width="150"></el-table-column>
-            <el-table-column prop="address" label="订单状态" width="116"></el-table-column>
-            <el-table-column prop="address" label="付款时间" width="170"></el-table-column>
-            <el-table-column prop="address" label="结算时间"></el-table-column>
-          </el-table>
-          
-          <div class="flex flex-x-right p-t-40 p-b-10">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 20, 30, 40]"
-              :page-size="10"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="400">
-            </el-pagination>
-          </div>
-
-        </el-tab-pane>
-        <el-tab-pane label="已付款（5）" name="tab2">
-          
-        </el-tab-pane>
-        <el-tab-pane label="已结算（2）" name="tab3">
-          
-        </el-tab-pane>
-        <el-tab-pane label="已失效（2）" name="tab4">
-          
-        </el-tab-pane>
+        <el-tab-pane :label="`${item.label}（${item.num}）`" :name="`tab${item.value}`" v-for="(item, index) in statuses" :key="index"></el-tab-pane>
       </el-tabs>
+      
+      <el-table stripe :data="items" v-loading="loading" style="width: 100%">
+        <el-table-column prop="ParentOrderNumber" label="订单号" width="180"></el-table-column>
+        <el-table-column prop="GoodsInfo" label="商品标题" width="260"></el-table-column>
+        <el-table-column prop="PaymentMoney" label="付款金额" width="120"></el-table-column>
+        <el-table-column prop="SettlementAmount" label="税后佣金" width="120"></el-table-column>
+        <el-table-column prop="CommissionRate" label="佣金比例" width="120"></el-table-column>
+        <el-table-column prop="UserMoney" label="自购佣金" width="120"></el-table-column>
+        <el-table-column prop="NickName" label="自购用户" width="150"></el-table-column>
+        <el-table-column prop="OrderState" label="订单状态" width="116"></el-table-column>
+        <el-table-column prop="CreateDateTime" label="付款时间" width="170"></el-table-column>
+        <el-table-column prop="SettlementTime" label="结算时间"></el-table-column>
+      </el-table>
+      
+      <div class="flex flex-x-right p-t-40 p-b-10">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalNum">
+        </el-pagination>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'OrderListView',
   components: {},
   data () {
     return {
       form: {
+        sn: '',
         name: '',
+        region: 'nickName',
+        input: '',
+        date: []
       },
-      date: '',
-      activeName: 'tab1',
-      currentPage: 5,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      activeName: 'tab0',
+      statuses: [
+        { label: '所有订单', value: 0, num: 0 },
+        { label: '已付款', value: 1, num: 0 },
+        { label: '已结算', value: 2, num: 0 },
+        { label: '已失效', value: 3, num: 0 }
+      ],
+      loading: false,
+      currentPage: 1,
+      pageSize: 10,
+      totalNum: 0,
+      items: []
+    }
+  },
+  filters: {
+    fixed2(val) {
+      if (!val) return 0
+      return val.toFixed(2)
+    },
+    date(val) {
+      return moment(val).format('YYYY-MM-DD HH:mm')
     }
   },
   computed: {
+    channel_id() {
+      return this.$route.query.channel_id || 1
+      // TaoBao = 1,JDCOM = 2,PinDuoDuo = 3
+    }
   },
   methods: {
     query () {
-      this.$http.post('/api/Home/GetTotalStatistics').then(res => {
+      this.loading = true
+      this.$http.post('/api/Order/GetOrdersPage', {
+        parentOrderNumber: this.form.sn,
+        goodsInfo: this.form.name,
+        mobile: this.form.region === 'phone' && this.form.input || '',
+        nickName: this.form.region === 'nickName' && this.form.input || '',
+        startTime: this.form.date && this.form.date.length && moment(this.form.date[0]).format('YYYY-MM-DD') || '',
+        endTime: this.form.date && this.form.date.length && moment(this.form.date[1]).format('YYYY-MM-DD') || '',
+        orderState: this.activeName.substring(3),
+        origin: this.channel_id,
+        page: this.currentPage,
+        pageSize: this.pageSize
+      }).then(res => {
+        this.items = res.data.items
+        this.totalNum = res.data.totalNum
+        this.statuses[0].num = res.data.allCount
+        this.statuses[1].num = res.data.count1
+        this.statuses[2].num = res.data.count2
+        this.statuses[3].num = res.data.count3
+        this.loading = false
         console.log(res)
+      }).catch(err => {
+        this.loading = false
+        this.$message.error(err.data.message)
       })
     },
-    handleClick(tab, event) {
-      console.log(tab, event);
+    handleClick() {
+      this.query()
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.currentPage = 1
+      this.pageSize = val
+      this.query()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    }
+      this.currentPage = val
+      this.query()
+    },
   },
   watch: {
+    channel_id() {
+      this.query()
+    }
   },
   mounted () {
     this.query()

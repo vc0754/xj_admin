@@ -24,7 +24,7 @@ axios.interceptors.request.use(config => {
 })
 
 axios.interceptors.response.use(res => {
-  if (res.data.stateCode === 0) return Promise.reject(res)
+  if (res.data.stateCode === 0 || res.data.stateCode === 2001) return Promise.reject(res)
   if (res.status !== 200 && res.status !== 201 && res.status !== 204) return Promise.reject(res)
   return res.data
 }, error => {

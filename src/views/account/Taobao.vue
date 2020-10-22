@@ -71,7 +71,8 @@ export default {
       // 授权回调链接
       this.$http.post('/api/UserAuth/GetRedirectUrl', { id: 0 }).then(res => {
         this.url = res.data
-        this.is_auth = true
+        window.location = res.data
+        // this.is_auth = true
       }).catch(err => {
         this.$message.error(err.data.message)
       })
@@ -88,13 +89,15 @@ export default {
   watch: {
   },
   mounted () {
-    this.query()
+    // this.query()
+    // this.on_auth()
+    // this.on_channel_open()
   },
-  beforeCreate() {
-    document.getElementsByTagName('body')[0].className = `${document.getElementsByTagName('body')[0].className} setting_wrap`
-  },
-  beforeDestroy() {
-    document.body.removeAttribute('class', 'setting_wrap')
-  }
+  // beforeCreate() {
+  //   document.getElementsByTagName('body')[0].className = `${document.getElementsByTagName('body')[0].className} setting_wrap`
+  // },
+  // beforeDestroy() {
+  //   document.body.removeAttribute('class', 'setting_wrap')
+  // }
 }
 </script>

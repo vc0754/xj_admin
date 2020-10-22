@@ -21,8 +21,19 @@
         <el-table-column prop="Remark" label="提现类型" width="220"></el-table-column>
         <el-table-column prop="Amount" label="提现金额" width="220"></el-table-column>
         <el-table-column prop="AlipayOrderNo" label="支付宝交易订单号" width="240"></el-table-column>
-        <el-table-column prop="CreateDateTime" label="申请时间" width="200"></el-table-column>
-        <el-table-column prop="OperateTime" label="处理时间" width="200"></el-table-column>
+
+        <el-table-column label="申请时间" width="200">
+          <template slot-scope="scope">
+            {{ scope.row.CreateDateTime | date }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="处理时间" width="200">
+          <template slot-scope="scope">
+            {{ scope.row.OperateTime | date }}
+          </template>
+        </el-table-column>
+
         <el-table-column prop="Istate" label="提现状态" width="180"></el-table-column>
       </el-table>
 
@@ -42,6 +53,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'UserDetailView',
   components: {},
@@ -65,7 +77,19 @@ export default {
       items: []
     }
   },
+  filters: {
+    fixed2(val) {
+      if (!val) return 0
+      return val.toFixed(2)
+    },
+    date(val) {
+      return moment(val).format('YYYY-MM-DD HH:mm')
+    }
+  },
   computed: {
+    id() {
+      return this.$route.query.id
+    }
   },
   methods: {
     query () {
@@ -73,7 +97,7 @@ export default {
       let params = {
         nickName: this.form.region === 'nickName' && this.form.input || '',
         phone: this.form.region === 'phone' && this.form.input || '',
-        userBuyerId: '',
+        userBuyerId: this.id,
         levelId: 1,
         tixianType: 0,
         istate: this.activeName.substring(3),
@@ -87,34 +111,6 @@ export default {
         this.statuses[1].num = res.data.count1
         this.statuses[2].num = res.data.count2
         this.statuses[3].num = res.data.count3
-
-        if(res.data.totalNum === 0) {
-          this.items = [{
-            "TiXianBuyerRecordId": 0,
-            "UserBuyerId": 0,
-            "TopUserId": 0,
-            "Amount": 0,
-            "TaxAmount": 0,
-            "CreateDateTime": "2020-10-21T02:53:07.842Z",
-            "Alipay": "string",
-            "UserName": "string",
-            "Phone": "string",
-            "Istate": 0,
-            "TiXianType": 0,
-            "TiXianTypeName": "string",
-            "Remark": "string",
-            "OperateTime": "string",
-            "IsFrozen": 0,
-            "LastTiXian": 0,
-            "BeforeTiXian": 0,
-            "NickName": "string",
-            "AlipayOrderNo": "string",
-            "UserRole": 0,
-            "UserRoleName": "string",
-            "branchNickName": "string"
-          }]
-          this.totalNum = 1
-        }
         this.loading = false
       }).catch(err => {
       this.loading = false

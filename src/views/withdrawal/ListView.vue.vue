@@ -32,17 +32,30 @@
         <el-table-column prop="Alipay" label="支付宝账号" width="150"></el-table-column>
         <el-table-column prop="UserName" label="姓名" width="130"></el-table-column>
         <el-table-column prop="Amount" label="提现金额" width="140"></el-table-column>
-        <el-table-column prop="Remark" label="提现类型" width="150"></el-table-column>
+        <el-table-column prop="TiXianTypeName" label="提现类型" width="150"></el-table-column>
         <el-table-column prop="AlipayOrderNo" label="支付宝交易号" width="165"></el-table-column>
         <el-table-column prop="Istate" label="提现状态" width="90"></el-table-column>
-        <el-table-column prop="CreateDateTime" label="申请提现时间" width="140"></el-table-column>
-        <el-table-column prop="OperateTime" label="处理时间" width="140"></el-table-column>
-        <el-table-column label="操作">
+
+        <el-table-column label="申请提现时间" width="140">
           <template slot-scope="scope">
-            <span @click="modify(scope.row.TiXianBuyerRecordId)">修改支付宝交易号</span>
-            <span @click="payment(scope.row.TiXianBuyerRecordId)">打款</span>
-            <span @click="reject(scope.row.TiXianBuyerRecordId)">驳回</span>
-            <router-link :to="`/withdrawal/detail?id=${scope.row.UserBuyerId}`">提现记录</router-link>
+            {{ scope.row.CreateDateTime | date }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="处理时间" width="140">
+          <template slot-scope="scope">
+            {{ scope.row.OperateTime | date }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" min-width="140">
+          <template slot-scope="scope">
+            <div class="blockspan">
+              <span @click="modify(scope.row.TiXianBuyerRecordId)">修改支付宝交易号</span>
+              <span @click="payment(scope.row.TiXianBuyerRecordId)">打款</span>
+              <span class="m-l-15" @click="reject(scope.row.TiXianBuyerRecordId)">驳回</span>
+              <router-link :to="`/withdrawal/detail?id=${scope.row.UserBuyerId}`">提现记录</router-link>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -60,11 +73,13 @@
       </div>
     </div>
 
-    <el-dialog title="打款修改支付宝交易号" :visible.sync="dialogVisibleModify" width="460px">
-      <el-form ref="formStore" :model="form_alipay">
+    <el-dialog title="打款修改支付宝交易号" :visible.sync="dialogVisibleModify" width="460px" class="d1">
+      <el-form ref="formStore" :model="form_alipay" label-width="130px">
+        <div style="padding: 35px 0">
         <el-form-item label="支付宝交易号">
           <el-input v-model="form_alipay.sn" placeholder="" />
         </el-form-item>
+        </div>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -73,8 +88,8 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="驳回" :visible.sync="dialogVisibleReject" width="460px">
-      <el-form ref="formStore" :model="form_reject">
+    <el-dialog title="驳回" :visible.sync="dialogVisibleReject" width="460px" class="d1">
+      <el-form ref="formStore" :model="form_reject" label-width="130px">
         <el-form-item label="用户昵称">
           <span>{{ form_reject.nickname }}</span>
         </el-form-item>
@@ -92,7 +107,7 @@
         </el-form-item>
         
         <el-form-item label="驳回理由">
-          <el-input v-model="form_reject.remark" placeholder="" />
+          <el-input type="textarea" v-model="form_reject.remark" placeholder="" />
         </el-form-item>
       </el-form>
 
@@ -102,22 +117,22 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="打款" :visible.sync="dialogVisiblePayment" width="460px">
-      <el-form ref="formStore" :model="form_payment">
+    <el-dialog title="打款" :visible.sync="dialogVisiblePayment" width="460px" class="d1">
+      <el-form ref="formStore" :model="form_payment" label-width="130px">
         <el-form-item label="用户昵称">
-          <span>{{ form_payment.nickname }}</span>
+          <span style="color: rgba(0, 0, 0, 0.85);">{{ form_payment.nickname }}</span>
         </el-form-item>
         
         <el-form-item label="支付宝账号">
-          <span>{{ form_payment.alipay }}</span>
+          <span style="color: rgba(0, 0, 0, 0.85);">{{ form_payment.alipay }}</span>
         </el-form-item>
         
         <el-form-item label="姓名">
-          <span>{{ form_payment.name }}</span>
+          <span style="color: rgba(0, 0, 0, 0.85);">{{ form_payment.name }}</span>
         </el-form-item>
         
         <el-form-item label="提现金额">
-          <span>{{ form_payment.amount }}</span>
+          <span style="color: rgba(0, 0, 0, 0.85);">{{ form_payment.amount }}</span>
         </el-form-item>
         
         <el-form-item label="支付宝交易号">
@@ -134,6 +149,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'UserListView',
   components: {},
@@ -178,6 +194,15 @@ export default {
       pageSize: 10,
       totalNum: 0,
       items: []
+    }
+  },
+  filters: {
+    fixed2(val) {
+      if (!val) return 0
+      return val.toFixed(2)
+    },
+    date(val) {
+      return moment(val).format('YYYY-MM-DD HH:mm')
     }
   },
   computed: {
@@ -230,34 +255,6 @@ export default {
         this.statuses[1].num = res.data.count1
         this.statuses[2].num = res.data.count2
         this.statuses[3].num = res.data.count3
-
-        if(res.data.totalNum === 0) {
-          this.items = [{
-            "TiXianBuyerRecordId": 111,
-            "UserBuyerId": 0,
-            "TopUserId": 0,
-            "Amount": 0,
-            "TaxAmount": 0,
-            "CreateDateTime": "2020-10-21T02:53:07.842Z",
-            "Alipay": "string",
-            "UserName": "string",
-            "Phone": "string",
-            "Istate": 0,
-            "TiXianType": 0,
-            "TiXianTypeName": "string",
-            "Remark": "string",
-            "OperateTime": "string",
-            "IsFrozen": 0,
-            "LastTiXian": 0,
-            "BeforeTiXian": 0,
-            "NickName": "string",
-            "AlipayOrderNo": "string",
-            "UserRole": 0,
-            "UserRoleName": "string",
-            "branchNickName": "string"
-          }]
-          this.totalNum = 1
-        }
         this.loading = false
       }).catch(err => {
         this.loading = false
@@ -320,3 +317,10 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+.blockspan {
+  span { color: #1890FF; cursor: pointer;}
+  a { display: block;}
+}
+</style>

@@ -33,8 +33,19 @@
         <el-table-column prop="phone" label="手机号码" min-width="120"></el-table-column>
         <el-table-column prop="userRole" label="等级"></el-table-column>
         <el-table-column prop="parentNickName" label="推荐人"></el-table-column>
-        <el-table-column prop="allMoney" label="账户余额"></el-table-column>
-        <el-table-column prop="regDateTime" label="注册时间" min-width="100"></el-table-column>
+
+        <el-table-column label="账户余额">
+          <template slot-scope="scope">
+            {{ scope.row.allMoney | fixed2 }}元
+          </template>
+        </el-table-column>
+
+        <el-table-column label="注册时间" min-width="100">
+          <template slot-scope="scope">
+            {{ scope.row.regDateTime | date }}
+          </template>
+        </el-table-column>
+
         <el-table-column prop="isUserFreeze" label="状态">
           <template slot-scope="scope">
             {{ scope.row.isUserFreeze === 0 ? '未冻结' : '冻结' }}
@@ -64,6 +75,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'UserListView',
   components: {},
@@ -85,6 +97,15 @@ export default {
       pageSize: 10,
       totalNum: 0,
       items: []
+    }
+  },
+  filters: {
+    fixed2(val) {
+      if (!val) return 0
+      return val.toFixed(2)
+    },
+    date(val) {
+      return moment(val).format('YYYY-MM-DD HH:mm')
     }
   },
   computed: {
