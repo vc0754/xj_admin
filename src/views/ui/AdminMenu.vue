@@ -7,86 +7,85 @@
       </router-link>
     </header>
 
-    <el-menu default-active="1" @open="handleOpen" @close="handleClose" router class="p-t-20">
+    <el-menu default-active="1" router class="p-t-20">
+      <template v-if="menus.length">
+        <template v-for="(item, index) in menus">
+          <el-submenu :index="`sub_${index}`" :key="index" v-if="item.children.length">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <span>{{ item.meta.title }}</span>
+            </template>
+            <template v-if="item.children.length">
+              <el-menu-item style="padding-left:50px;" :index="subitem.path" v-for="(subitem, index2) in item.children" :key="index2">{{ subitem.meta.title }}</el-menu-item>
+            </template>
+          </el-submenu>
 
-      <el-menu-item index="/">
-        <i class="el-icon-location"></i>
-        <span slot="title">首页</span>
-      </el-menu-item>
+          <el-menu-item :index="item.path" :key="index" v-else>
+            <i class="el-icon-location"></i>
+            <span slot="title">{{ item.meta.title }}</span>
+          </el-menu-item>
+        </template>
+      </template>
 
-      <el-submenu index="2">
-        <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span>APP 管理</span>
-        </template> 
-        <el-menu-item style="padding-left:50px;" index="/setting">APP 设置</el-menu-item>
-      </el-submenu>
+      <template v-else>
+        <!-- <el-menu-item index="/">
+          <i class="el-icon-location"></i>
+          <span slot="title">首页</span>
+        </el-menu-item>
 
-      <el-submenu index="3">
-        <template slot="title">
-        <i class="el-icon-setting"></i>
-          <span>数据统计</span>
-        </template> 
-        <el-menu-item style="padding-left:50px;" index="/statistics">数据账单</el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="4">
-        <template slot="title">
-        <i class="el-icon-setting"></i>
-          <span>用户管理</span>
-        </template> 
-        <el-menu-item style="padding-left:50px;" index="/users">普通用户</el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="5">
-        <template slot="title">
-        <i class="el-icon-setting"></i>
-          <span>订单管理</span>
-        </template> 
-        <el-menu-item style="padding-left:50px;" index="/orders?channel_id=1">淘宝订单</el-menu-item>
-        <el-menu-item style="padding-left:50px;" index="/orders?channel_id=3">拼多多订单</el-menu-item>
-        <el-menu-item style="padding-left:50px;" index="/orders?channel_id=2">京东订单</el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="6">
-        <template slot="title">
-        <i class="el-icon-setting"></i>
-          <span>账号管理</span>
-        </template> 
-        <el-menu-item style="padding-left:50px;" index="/account">淘宝账号</el-menu-item>
-        <el-menu-item style="padding-left:50px;" index="/auth">更新授权</el-menu-item>
-        <el-menu-item style="padding-left:50px;" index="/channel">开启渠道模式</el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="7">
-        <template slot="title">
-        <i class="el-icon-setting"></i>
-          <span>提现管理</span>
-        </template> 
-        <el-menu-item style="padding-left:50px;" index="/withdrawal/setting">提现设置</el-menu-item>
-        <el-menu-item style="padding-left:50px;" index="/withdrawal">提现列表</el-menu-item>
-      </el-submenu>
-      
-      <div class="line">
-        <span>- 以上为静态菜单 -</span>
-        <span>- 以下为动态加载菜单 -</span>
-      </div>
-
-      <template v-for="(item, index) in menus">
-        <el-submenu :index="`sub_${index}`" :key="index" v-if="item.children.length">
+        <el-submenu index="2">
           <template slot="title">
-            <i class="el-icon-setting"></i>
-            <span>{{ item.meta.title }}</span>
-          </template>
-          <template v-if="item.children.length">
-            <el-menu-item style="padding-left:50px;" :index="subitem.path" v-for="(subitem, index2) in item.children" :key="index2">{{ subitem.meta.title }}</el-menu-item>
-          </template>
+            <i class="el-icon-menu"></i>
+            <span>APP 管理</span>
+          </template> 
+          <el-menu-item style="padding-left:50px;" index="/setting">APP 设置</el-menu-item>
         </el-submenu>
 
-        <el-menu-item :index="item.path" :key="index" v-else>
-          <i class="el-icon-location"></i>
-          <span slot="title">{{ item.meta.title }}</span>
-        </el-menu-item>
+        <el-submenu index="3">
+          <template slot="title">
+          <i class="el-icon-setting"></i>
+            <span>数据统计</span>
+          </template> 
+          <el-menu-item style="padding-left:50px;" index="/statistics">数据账单</el-menu-item>
+        </el-submenu>
+
+        <el-submenu index="4">
+          <template slot="title">
+          <i class="el-icon-setting"></i>
+            <span>用户管理</span>
+          </template> 
+          <el-menu-item style="padding-left:50px;" index="/users">普通用户</el-menu-item>
+        </el-submenu>
+
+        <el-submenu index="5">
+          <template slot="title">
+          <i class="el-icon-setting"></i>
+            <span>订单管理</span>
+          </template> 
+          <el-menu-item style="padding-left:50px;" index="/orders?channel_id=1">淘宝订单</el-menu-item>
+          <el-menu-item style="padding-left:50px;" index="/orders?channel_id=3">拼多多订单</el-menu-item>
+          <el-menu-item style="padding-left:50px;" index="/orders?channel_id=2">京东订单</el-menu-item>
+        </el-submenu>
+
+        <el-submenu index="6">
+          <template slot="title">
+          <i class="el-icon-setting"></i>
+            <span>账号管理</span>
+          </template> 
+          <el-menu-item style="padding-left:50px;" index="/account">淘宝账号</el-menu-item>
+          <el-menu-item style="padding-left:50px;" index="/auth">更新授权</el-menu-item>
+          <el-menu-item style="padding-left:50px;" index="/channel">开启渠道模式</el-menu-item>
+        </el-submenu>
+
+        <el-submenu index="7">
+          <template slot="title">
+          <i class="el-icon-setting"></i>
+            <span>提现管理</span>
+          </template> 
+          <el-menu-item style="padding-left:50px;" index="/withdrawal/setting">提现设置</el-menu-item>
+          <el-menu-item style="padding-left:50px;" index="/withdrawal">提现列表</el-menu-item>
+        </el-submenu> -->
+
       </template>
     </el-menu>
   </nav>
@@ -105,50 +104,34 @@ export default {
   methods: {
     query () {
       this.$http.post('/api/Authority/Menu').then(res => {
-        this.menus = res.data
+        // this.menus = res.data
         
-        let m = [...this.menus]
-        console.log(m)
+        let new_routes = []
+        res.data.map(item => {
+          let children = []
+          if (item.children.length) {
+            item.children.map(item2 => {
+              children.push({
+                path: `/page${item2.id}`,
+                meta: item2.meta,
+                component: resolve => require([`@/views/page${item2.id}.vue`], resolve),
+                children: []
+              })
+            })
+          }
 
-        // let new_routes = []
-        // res.data.map(item => {
-          // this.$router.addRoutes({
-          //   // id: item.id,
-          //   meta: item.meta,
-          //   path: item.path,
-          //   component: resolve => require(['@/layout/Layout.vue'], resolve),
-          //   children: item.children,
-          // })
-          // let path = item.path.split('/')
-          // path.shift()
-          // path.shift()
-          // console.log(path)
+          new_routes.push({
+            path:'/',
+            meta: item.meta,
+            component: resolve => require(['@/layout/Layout.vue'], resolve),
+            children: children
+          })
+        })
+        console.log(new_routes)
 
-          // new_routes.push({
-          //   path:'/',
-          //   meta: item.meta,
-          //   component: resolve => require(['@/layout/Layout.vue'], resolve),
-          //   children: item.children.length ? item.children : []
-          // })
-        // })
-        // console.log(new_routes)
-
-        // this.$router.addRoutes({
-        //   path: '/444',
-        //   meta: { title: 'APP 设置' },
-        //   name: '444',
-        //   component: resolve => require(['@/layout/Layout.vue'], resolve),
-        //   children: []
-        // })
-
-        // let routes = new_routes.concat(this.$router.options.routes)
-        // this.$router.addRoutes({
-        //   path: '/home-page',
-        //   component: resolve => require(['@/layout/Layout.vue'], resolve),
-        //   children: new_routes
-        // })
-
-        console.log(this.$router.options.routes)
+        let routes = new_routes.concat(this.$router.options.routes)
+        this.$router.addRoutes(routes)
+        this.menus = new_routes
       })
     },
     handleOpen(key, keyPath) {

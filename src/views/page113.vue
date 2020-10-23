@@ -13,11 +13,11 @@
       
       <div class="authTaobao" v-if="!is_auth">
         <el-button type="info" @click="on_auth">
-          <img src="../../assets/icon_tb.png" alt="">
+          <img src="../assets/icon_tb.png" alt="">
           淘宝账号登录授权
         </el-button>
         <div class="flex flex-y-center">
-          <img src="../../assets/icon_click.png" alt="">
+          <img src="../assets/icon_click.png" alt="">
           <span>请点击授权</span>
         </div>
       </div>
@@ -49,11 +49,7 @@ export default {
     return {
       is_auth: false,
       url: '',
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }]
+      tableData: []
     }
   },
   computed: {

@@ -136,11 +136,10 @@ export default {
   },
   computed: {
     channel_id() {
-      return this.$route.query.channel_id || 1
-      // TaoBao = 1,JDCOM = 2,PinDuoDuo = 3
+      return 1
     },
     channel_name() {
-      return this.channel_id == 1 ? '淘宝' : this.channel_id == 2 ? '拼多多' : '京东'
+      return this.channel_id == 1 ? '淘宝' : this.channel_id == 2 ? '京东' : '拼多多'
     }
   },
   methods: {

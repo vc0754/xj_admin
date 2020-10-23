@@ -13,14 +13,14 @@
 
       <div class="formTable taobaoTable">
         <el-table stripe :data="tableData" style="width: 100%">
-          <el-table-column prop="date" label="淘宝号" width="250"></el-table-column>
-          <el-table-column prop="name" label="授权到期时间" width="230"></el-table-column>
-          <el-table-column prop="address" label="渠道PID" width="350"></el-table-column>
-          <el-table-column prop="address" label="是否开启渠道模式" width="220"></el-table-column>
-          <el-table-column prop="address" label="授权剩余天数" width="220"></el-table-column>
+          <el-table-column prop="aliMaMaName" label="淘宝号" width="250"></el-table-column>
+          <el-table-column prop="updateDateTime" label="授权到期时间" width="230"></el-table-column>
+          <el-table-column prop="commonPid" label="渠道PID" width="350"></el-table-column>
+          <el-table-column prop="isChannel" label="是否开启渠道模式" width="220"></el-table-column>
+          <el-table-column prop="yxDayQty" label="授权剩余天数" width="220"></el-table-column>
           <el-table-column label="操作">
-            <router-link to="/user/detail">更新授权</router-link>
-            <router-link to="/user/detail" class="m-l-20">开启渠道模式</router-link>
+            <span @click="on_auth">更新授权</span>
+            <span @click="on_channel_open" class="m-l-20">开启渠道模式</span>
           </el-table-column>
         </el-table>
       </div>
@@ -32,7 +32,7 @@
 
 <script>
 export default {
-  name: 'Auth',
+  name: 'TaoBao',
   components: {},
   data () {
     return {
@@ -64,6 +64,7 @@ export default {
       // 开启渠道模式
       this.$http.post('/api/UserAuth/UpdateAliMaMaUser').then(res => {
         console.log(res)
+        this.query()
       }).catch(err => {
         this.$message.error(err.data.message)
       })
@@ -75,6 +76,6 @@ export default {
     this.query()
     // this.on_auth()
     // this.on_channel_open()
-  }
+  },
 }
 </script>
