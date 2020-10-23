@@ -50,10 +50,10 @@ export default {
       identifyCode: '',
       captcha: '',  
       formPSW: {
-        // username: '18800000111',
-        // pwd: '123456',
-        username: '',
-        pwd: '',
+        username: '18800000111',
+        pwd: '123456',
+        // username: '',
+        // pwd: '',
         level_id: 1
       },
       formValidatePSW: {

@@ -7,12 +7,12 @@
       </router-link>
     </header>
 
-    <el-menu default-active="1" router class="p-t-20">
+    <el-menu default-active="/" router class="p-t-20">
       <template v-if="menus.length">
         <template v-for="(item, index) in menus">
           <el-submenu :index="`sub_${index}`" :key="index" v-if="item.children.length">
             <template slot="title">
-              <i class="el-icon-setting"></i>
+              <img :src="require(`../../assets/icon_${ item.id }.png`)" alt="" class="m-l-5 m-r-10">
               <span>{{ item.meta.title }}</span>
             </template>
             <template v-if="item.children.length">
@@ -21,7 +21,7 @@
           </el-submenu>
 
           <el-menu-item :index="item.path" :key="index" v-else>
-            <i class="el-icon-location"></i>
+            <img :src="require(`../../assets/icon_${ item.id }.png`)" alt="" class="m-l-5 m-r-10">
             <span slot="title">{{ item.meta.title }}</span>
           </el-menu-item>
         </template>
@@ -112,6 +112,7 @@ export default {
           if (item.children.length) {
             item.children.map(item2 => {
               children.push({
+                id: item2.id,
                 path: `/page${item2.id}`,
                 meta: item2.meta,
                 component: resolve => require([`@/views/page${item2.id}.vue`], resolve),
@@ -121,6 +122,7 @@ export default {
           }
 
           new_routes.push({
+            id: item.id,
             path:'/',
             meta: item.meta,
             component: resolve => require(['@/layout/Layout.vue'], resolve),
