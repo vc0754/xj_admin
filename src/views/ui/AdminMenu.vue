@@ -127,7 +127,7 @@ export default {
             children: children
           })
         })
-        console.log(new_routes)
+        // console.log(new_routes)
 
         let routes = new_routes.concat(this.$router.options.routes)
         this.$router.addRoutes(routes)
