@@ -96,9 +96,9 @@ export default {
       activeName: 'tab-1',
       statuses: [
         { label: '全部', value: -1, num: 0 },
-        { label: '会员', value: 0, num: 0 },
-        { label: '团长', value: 1, num: 0 },
-        { label: '高级团长', value: 2, num: 0 }
+        { label: '会员', value: 1, num: 0 },
+        { label: '团长', value: 2, num: 0 },
+        { label: '高级团长', value: 3, num: 0 }
       ],
       loading: false,
       currentPage: 1,

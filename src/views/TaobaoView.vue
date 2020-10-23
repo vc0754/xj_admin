@@ -24,14 +24,30 @@
 
       <div class="formTable taobaoTable" v-else>
         <el-table stripe :data="tableData" style="width: 100%">
-          <el-table-column prop="date" label="淘宝号" width="250"></el-table-column>
-          <el-table-column prop="name" label="授权到期时间" width="230"></el-table-column>
-          <el-table-column prop="address" label="渠道PID" width="350"></el-table-column>
-          <el-table-column prop="address" label="是否开启渠道模式" width="220"></el-table-column>
-          <el-table-column prop="address" label="授权剩余天数" width="220"></el-table-column>
-          <el-table-column label="操作">
-            <router-link to="/user/detail">更新授权</router-link>
-            <router-link to="/user/detail" class="m-l-20">开启渠道模式</router-link>
+          <el-table-column prop="aliMaMaName" label="淘宝号" min-width="180"></el-table-column>
+
+          <el-table-column label="授权到期时间" width="230">
+            <template slot-scope="scope">
+              {{ scope.row.updateDateTime }}
+              <!-- {{ scope.row.yxDayQty }} -->
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="commonPid" label="渠道PID" min-width="300"></el-table-column>
+
+          <el-table-column label="是否开启渠道模式" width="220">
+            <template slot-scope="scope">
+              {{ scope.row.isChannel === 0 ? '否' : '是' }}
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="yxDayQty" label="授权剩余天数" min-width="180"></el-table-column>
+
+          <el-table-column label="操作" min-width="265">
+            <template slot-scope="scope">
+              <span class="blue" @click="on_auth">更新授权</span>
+              <span class="blue m-l-20" @click="on_channel_open" v-if="!scope.row.commonPid">开启渠道模式</span>
+            </template>
           </el-table-column>
         </el-table>
       </div>
@@ -61,7 +77,10 @@ export default {
     query () {
       // 获取淘宝授权信息
       this.$http.post('/api/UserAuth/GetAliMaMaUserList').then(res => {
-        console.log(res)
+        if (res.data.length) {
+          this.tableData = res.data
+          this.is_auth = true
+        }
       }).catch(err => {
         this.$message.error(err.data.message)
         if (err.data.message === '身份验证失败') {
@@ -75,7 +94,6 @@ export default {
       this.$http.post('/api/UserAuth/GetRedirectUrl', { id: 0 }).then(res => {
         this.url = res.data
         window.location = res.data
-        // this.is_auth = true
       }).catch(err => {
         this.$message.error(err.data.message)
         if (err.data.message === '身份验证失败') {
@@ -88,6 +106,7 @@ export default {
       // 开启渠道模式
       this.$http.post('/api/UserAuth/UpdateAliMaMaUser').then(res => {
         console.log(res)
+        this.query()
       }).catch(err => {
         this.$message.error(err.data.message)
         if (err.data.message === '身份验证失败') {
@@ -100,7 +119,7 @@ export default {
   watch: {
   },
   mounted () {
-    // this.query()
+    this.query()
     // this.on_auth()
     // this.on_channel_open()
   },
@@ -112,3 +131,7 @@ export default {
   // }
 }
 </script>
+
+<style lang="less" scoped>
+.blue { color: #1890FF; cursor: pointer;}
+</style>

@@ -7,7 +7,7 @@
       </router-link>
     </header>
 
-    <el-menu default-active="/" router class="p-t-20" :unique-opened="true">
+    <el-menu :default-active="default_active" router class="p-t-20" :unique-opened="true">
       <template v-if="menus.length">
         <template v-for="(item, index) in menus">
           <el-submenu :index="`sub_${index}`" :key="index" v-if="item.children.length">
@@ -72,9 +72,7 @@
           <i class="el-icon-setting"></i>
             <span>账号管理</span>
           </template> 
-          <el-menu-item style="padding-left:50px;" index="/account">淘宝账号</el-menu-item>
-          <el-menu-item style="padding-left:50px;" index="/auth">更新授权</el-menu-item>
-          <el-menu-item style="padding-left:50px;" index="/channel">开启渠道模式</el-menu-item>
+          <el-menu-item style="padding-left:50px;" index="/taobao">淘宝账号</el-menu-item>
         </el-submenu>
 
         <el-submenu index="7">
@@ -100,6 +98,9 @@ export default {
     }
   },
   computed: {
+    default_active() {
+      return `${window.location.pathname}${window.location.search}` || '/'
+    }
   },
   methods: {
     query () {
@@ -109,7 +110,16 @@ export default {
         let new_routes = []
         res.data.map(item => {
           let children = []
-          if (item.children.length) {
+          if (item.id === 112) {
+            children = [
+              {
+                path: '/taobao',
+                meta: {title: "淘宝账号", show: true},
+                component: resolve => require([`@/views/TaobaoView.vue`], resolve),
+                children: []
+              }
+            ]
+          } else if (item.children.length) {
             item.children.map(item2 => {
               children.push({
                 id: item2.id,
