@@ -83,9 +83,10 @@ export default {
       if (!this.formPSW.login_pwd2) return this.$message.error('确认新密码')
       if (this.formPSW.login_pwd2 !== this.formPSW.login_pwd2) return this.$message.error('两次密码不一致')
       
-      this.$http.post('/api/UserInfo/UpdatePwd', this.formPSW).then(res => {
-        console.log(res)
+      this.$http.post('/api/UserInfo/UpdatePwd', this.formPSW).then(() => {
+        // console.log(res)
         this.$message.success('修改成功')
+        this.$router.replace({ path: '/' })
       }).catch(err => {
         this.$message.error(err.data.message)
       })

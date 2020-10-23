@@ -163,6 +163,8 @@
 
 <script>
 import moment from 'moment'
+import { mapActions } from 'vuex'
+import { USER_SIGNOUT } from '@/store/modules/user'
 export default {
   name: 'UserListView',
   components: {},
@@ -222,6 +224,7 @@ export default {
   computed: {
   },
   methods: {
+    ...mapActions([ USER_SIGNOUT ]),
     modify(id) {
       this.form_alipay.id = id
       this.dialogVisibleModify = true
@@ -273,6 +276,10 @@ export default {
       }).catch(err => {
         this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     handleClick() {
@@ -298,6 +305,10 @@ export default {
       }).catch(err => {
         // this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     on_payment() {
@@ -311,6 +322,10 @@ export default {
       }).catch(err => {
         // this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     on_reject() {
@@ -324,6 +339,10 @@ export default {
       }).catch(err => {
         // this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     }
   },

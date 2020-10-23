@@ -15,7 +15,7 @@
           
           <el-form-item prop="captcha">
             <el-input v-model="captcha" placeholder="验证码" :maxlength="6" />
-            <s-identify :identifyCode="identifyCode" class="captcha"></s-identify>
+            <s-identify :identifyCode="identifyCode" class="captcha" @click.native="refreshCode"></s-identify>
           </el-form-item>
         </el-form>
 

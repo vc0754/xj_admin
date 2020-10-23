@@ -22,7 +22,7 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="淘宝" name="t1"></el-tab-pane>
         <el-tab-pane label="拼多多" name="t2"></el-tab-pane>
-        <el-tab-pane label="东京" name="t3"></el-tab-pane>
+        <el-tab-pane label="京东" name="t3"></el-tab-pane>
       </el-tabs>
       
       <el-table stripe :data="items" v-loading="loading" style="width: 100%">
@@ -76,6 +76,8 @@
 
 <script>
 import moment from 'moment'
+import { mapActions } from 'vuex'
+import { USER_SIGNOUT } from '@/store/modules/user'
 export default {
   name: 'StatisticsView',
   components: {},
@@ -102,6 +104,7 @@ export default {
   computed: {
   },
   methods: {
+    ...mapActions([ USER_SIGNOUT ]),
     query () {
       this.loading = true
       this.$http.post('/api/Order/GetDataBillsStatistics', {
@@ -118,6 +121,10 @@ export default {
       }).catch(err => {
         this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     handleClick() {

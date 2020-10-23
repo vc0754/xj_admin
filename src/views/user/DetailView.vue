@@ -82,6 +82,8 @@
 
 <script>
 import moment from 'moment'
+import { mapActions } from 'vuex'
+import { USER_SIGNOUT } from '@/store/modules/user'
 export default {
   name: 'UserDetailView',
   components: {},
@@ -126,6 +128,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions([ USER_SIGNOUT ]),
     goback() {
       this.$router.go(-1)
     },
@@ -134,6 +137,12 @@ export default {
         NickName: this.name
       }).then(res => {
         this.user = res.data.items[0]
+      }).catch(err => {
+        this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     query() {
@@ -150,6 +159,10 @@ export default {
       }).catch(err => {
         this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     query2() {
@@ -171,6 +184,10 @@ export default {
       }).catch(err => {
         this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     handleClick() {

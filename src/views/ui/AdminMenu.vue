@@ -7,7 +7,7 @@
       </router-link>
     </header>
 
-    <el-menu default-active="/" router class="p-t-20">
+    <el-menu default-active="/" router class="p-t-20" :unique-opened="true">
       <template v-if="menus.length">
         <template v-for="(item, index) in menus">
           <el-submenu :index="`sub_${index}`" :key="index" v-if="item.children.length">
@@ -113,9 +113,9 @@ export default {
             item.children.map(item2 => {
               children.push({
                 id: item2.id,
-                path: `/page${item2.id}`,
+                path: this.view_path(item2.id),
                 meta: item2.meta,
-                component: resolve => require([`@/views/page${item2.id}.vue`], resolve),
+                component: this.view_component(item2.id),
                 children: []
               })
             })
@@ -135,6 +135,28 @@ export default {
         this.$router.addRoutes(routes)
         this.menus = new_routes
       })
+    },
+    view_path(id) {
+      if (id === 3) return '/setting'
+      if (id === 56) return '/users'
+      if (id === 86) return '/withdrawal/setting'
+      if (id === 88) return '/withdrawal'
+      if (id === 111) return '/statistics'
+      if (id === 51) return '/orders?channel_id=1'
+      if (id === 52) return '/orders?channel_id=3'
+      if (id === 53) return '/orders?channel_id=2'
+      if (id === 113 || id === 114 || id === 115) return '/taobao'
+      return `/page${id}`
+    },
+    view_component(id) {
+      if (id === 3) return resolve => require([`@/views/SettingView.vue`], resolve)
+      if (id === 56) return resolve => require([`@/views/user/ListView.vue`], resolve)
+      if (id === 86) return resolve => require([`@/views/withdrawal/SettingView.vue`], resolve)
+      if (id === 88) return resolve => require([`@/views/withdrawal/ListView.vue`], resolve)
+      if (id === 111) return resolve => require([`@/views/StatisticsView.vue`], resolve)
+      if (id === 51 || id === 52 || id === 53) return resolve => require([`@/views/OrderListView.vue`], resolve)
+      if (id === 113 || id === 114 || id === 115) return resolve => require([`@/views/TaobaoView.vue`], resolve)
+      return resolve => require([`@/views/page${id}.vue`], resolve)
     },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);

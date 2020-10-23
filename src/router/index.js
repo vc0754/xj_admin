@@ -21,17 +21,17 @@ const routes = [
       {
         path: '/setting',
         meta: { title: 'APP 设置' },
-        component: () => import('@/views/page3.vue' /* webpackChunkName: 'setting' */)
+        component: () => import('@/views/SettingView.vue' /* webpackChunkName: 'setting' */)
       },
       {
         path: '/statistics',
         meta: { title: '数据统计' },
-        component: () => import('@/views/page111.vue' /* webpackChunkName: 'statistics' */)
+        component: () => import('@/views/StatisticsView.vue' /* webpackChunkName: 'statistics' */)
       },
       {
         path: '/users',
         meta: { title: '用户管理' },
-        component: () => import('@/views/page56.vue' /* webpackChunkName: 'users' */)
+        component: () => import('@/views/user/ListView.vue' /* webpackChunkName: 'users' */)
       },
       {
         path: '/user/detail',
@@ -41,27 +41,27 @@ const routes = [
       {
         path: '/orders',
         meta: { title: '订单管理' },
-        component: () => import('@/views/page51.vue' /* webpackChunkName: 'orders' */)
+        component: () => import('@/views/OrderListView.vue' /* webpackChunkName: 'orders' */)
       },
       {
-        path: '/account',
-        meta: { title: '用户管理' },
-        component: () => import('@/views/page113.vue' /* webpackChunkName: 'taobao' */)
+        path: '/taobao',
+        meta: { title: '账号管理' },
+        component: () => import('@/views/TaobaoView.vue' /* webpackChunkName: 'taobao' */)
       },
-      {
-        path: '/auth',
-        meta: { title: '用户管理' },
-        component: () => import('@/views/page114.vue')
-      },
-      {
-        path: '/channel',
-        meta: { title: '用户管理' },
-        component: () => import('@/views/page115.vue')
-      },
+      // {
+      //   path: '/auth',
+      //   meta: { title: '用户管理' },
+      //   component: () => import('@/views/page114.vue')
+      // },
+      // {
+      //   path: '/channel',
+      //   meta: { title: '用户管理' },
+      //   component: () => import('@/views/page115.vue')
+      // },
       {
         path: '/withdrawal',
         meta: { title: '提现设置' },
-        component: () => import('@/views/page88.vue' /* webpackChunkName: 'withdrawal' */)
+        component: () => import('@/views/withdrawal/ListView.vue' /* webpackChunkName: 'withdrawal' */)
       },
       {
         path: '/withdrawal/detail',
@@ -71,7 +71,7 @@ const routes = [
       {
         path: '/withdrawal/setting',
         meta: { title: '提现设置' },
-        component: () => import('@/views/page86.vue' /* webpackChunkName: 'wsetting' */)
+        component: () => import('@/views/withdrawal/SettingView.vue' /* webpackChunkName: 'wsetting' */)
       },
     ]
   },
@@ -95,7 +95,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  // mode: 'history',
+  mode: 'history',
   base: process.env.BASE_URL || __dirname,
   routes
 })

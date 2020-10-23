@@ -98,6 +98,8 @@
 
 <script>
 import moment from 'moment'
+import { mapActions } from 'vuex'
+import { USER_SIGNOUT } from '@/store/modules/user'
 export default {
   name: 'OrderListView',
   components: {},
@@ -136,13 +138,14 @@ export default {
   },
   computed: {
     channel_id() {
-      return 1
+      return this.$route.query.channel_id
     },
     channel_name() {
       return this.channel_id == 1 ? '淘宝' : this.channel_id == 2 ? '京东' : '拼多多'
     }
   },
   methods: {
+    ...mapActions([ USER_SIGNOUT ]),
     query () {
       this.loading = true
       this.$http.post('/api/Order/GetOrdersPage', {
@@ -168,6 +171,10 @@ export default {
       }).catch(err => {
         this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     handleClick() {

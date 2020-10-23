@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+import { USER_SIGNOUT } from '@/store/modules/user'
 export default {
   name: 'TaoBao',
   components: {},
@@ -55,12 +57,17 @@ export default {
   computed: {
   },
   methods: {
+    ...mapActions([ USER_SIGNOUT ]),
     query () {
       // 获取淘宝授权信息
       this.$http.post('/api/UserAuth/GetAliMaMaUserList').then(res => {
         console.log(res)
       }).catch(err => {
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     on_auth() {
@@ -71,6 +78,10 @@ export default {
         // this.is_auth = true
       }).catch(err => {
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     on_channel_open() {
@@ -79,6 +90,10 @@ export default {
         console.log(res)
       }).catch(err => {
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     }
   },

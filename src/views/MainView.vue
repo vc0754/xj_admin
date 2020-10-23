@@ -92,6 +92,8 @@
 
 <script>
 import echarts from "echarts";
+import { mapActions } from 'vuex'
+import { USER_SIGNOUT } from '@/store/modules/user'
 export default {
   name: 'MainView',
   components: {},
@@ -124,12 +126,17 @@ export default {
     }
   },
   methods: {
+    ...mapActions([ USER_SIGNOUT ]),
     query () {
       this.$http.post('/api/Home/GetTotalStatistics').then(res => {
         this.data = res.data
         this.initCharts()
       }).catch(err => {
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     initCharts() {

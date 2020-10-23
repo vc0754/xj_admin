@@ -31,7 +31,13 @@
         <el-table-column prop="authorize" label="授权账号" min-width="130"></el-table-column>
         <el-table-column prop="invitation" label="APP邀请码" min-width="90"></el-table-column>
         <el-table-column prop="phone" label="手机号码" min-width="120"></el-table-column>
-        <el-table-column prop="userRole" label="等级"></el-table-column>
+
+        <el-table-column label="等级">
+          <template slot-scope="scope">
+            {{ scope.row.userRole == 1 ? '会员' : scope.row.userRole == 2 ? '团长' : '高级团长' }}
+          </template>
+        </el-table-column>
+
         <el-table-column prop="parentNickName" label="推荐人"></el-table-column>
 
         <el-table-column label="账户余额">
@@ -76,6 +82,8 @@
 
 <script>
 import moment from 'moment'
+import { mapActions } from 'vuex'
+import { USER_SIGNOUT } from '@/store/modules/user'
 export default {
   name: 'UserListView',
   components: {},
@@ -88,9 +96,9 @@ export default {
       activeName: 'tab-1',
       statuses: [
         { label: '全部', value: -1, num: 0 },
-        { label: '第一等级', value: 0, num: 0 },
-        { label: '第二等级', value: 1, num: 0 },
-        { label: '第三等级', value: 2, num: 0 }
+        { label: '会员', value: 0, num: 0 },
+        { label: '团长', value: 1, num: 0 },
+        { label: '高级团长', value: 2, num: 0 }
       ],
       loading: false,
       currentPage: 1,
@@ -111,13 +119,14 @@ export default {
   computed: {
   },
   methods: {
+    ...mapActions([ USER_SIGNOUT ]),
     query () {
       this.loading = true
       let params = {
         nickName: this.form.region === 'nickName' && this.form.input || '',
         phone: this.form.region === 'phone' && this.form.input || '',
         CompanyName: '',
-        LevelId: 0,
+        LevelId: 3,
         UserRole: this.activeName.substring(3),
         page: this.currentPage,
         pageSize: this.pageSize
@@ -133,6 +142,10 @@ export default {
       }).catch(err => {
         this.loading = false
         this.$message.error(err.data.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     handleClick() {

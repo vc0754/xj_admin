@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+import { USER_SIGNOUT } from '@/store/modules/user'
 export default {
   name: 'SettingView',
   components: {},
@@ -53,11 +55,16 @@ export default {
   computed: {
   },
   methods: {
+    ...mapActions([ USER_SIGNOUT ]),
     query () {
       this.$http.post('/api/TiXian/GetTiXianBaseConfig').then(res => {
         this.form = res.data
       }).catch(err => {
         this.$message.error(err.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     },
     submit() {
@@ -65,6 +72,10 @@ export default {
         if (res.stateCode === 1) this.$message.success(res.message)
       }).catch(err => {
         this.$message.error(err.message)
+        if (err.data.message === '身份验证失败') {
+          this.USER_SIGNOUT()
+          this.$router.replace({ path: '/sign' })
+        }
       })
     }
   },
