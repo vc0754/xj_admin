@@ -54,6 +54,8 @@
           <span>账号管理</span>
         </template> 
         <el-menu-item style="padding-left:50px;" index="/account">淘宝账号</el-menu-item>
+        <el-menu-item style="padding-left:50px;" index="/auth">更新授权</el-menu-item>
+        <el-menu-item style="padding-left:50px;" index="/channel">开启渠道模式</el-menu-item>
       </el-submenu>
 
       <el-submenu index="7">
@@ -65,7 +67,10 @@
         <el-menu-item style="padding-left:50px;" index="/withdrawal">提现列表</el-menu-item>
       </el-submenu>
       
-      <!-- <div class="line"></div>
+      <div class="line">
+        <span>- 以上为静态菜单 -</span>
+        <span>- 以下为动态加载菜单 -</span>
+      </div>
 
       <template v-for="(item, index) in menus">
         <el-submenu :index="`sub_${index}`" :key="index" v-if="item.children.length">
@@ -82,10 +87,7 @@
           <i class="el-icon-location"></i>
           <span slot="title">{{ item.meta.title }}</span>
         </el-menu-item>
-      </template> -->
-      
-      
-
+      </template>
     </el-menu>
   </nav>
 </template>
@@ -104,28 +106,49 @@ export default {
     query () {
       this.$http.post('/api/Authority/Menu').then(res => {
         this.menus = res.data
+        
+        let m = [...this.menus]
+        console.log(m)
 
         // let new_routes = []
         // res.data.map(item => {
-        //   new_routes.push({
-        //     path: item.path,
-        //     meta: item.meta,
-        //     component: resolve => require(['@/layout/Layout.vue'], resolve)
-        //   })
+          // this.$router.addRoutes({
+          //   // id: item.id,
+          //   meta: item.meta,
+          //   path: item.path,
+          //   component: resolve => require(['@/layout/Layout.vue'], resolve),
+          //   children: item.children,
+          // })
+          // let path = item.path.split('/')
+          // path.shift()
+          // path.shift()
+          // console.log(path)
+
+          // new_routes.push({
+          //   path:'/',
+          //   meta: item.meta,
+          //   component: resolve => require(['@/layout/Layout.vue'], resolve),
+          //   children: item.children.length ? item.children : []
+          // })
         // })
+        // console.log(new_routes)
+
+        // this.$router.addRoutes({
+        //   path: '/444',
+        //   meta: { title: 'APP 设置' },
+        //   name: '444',
+        //   component: resolve => require(['@/layout/Layout.vue'], resolve),
+        //   children: []
+        // })
+
         // let routes = new_routes.concat(this.$router.options.routes)
         // this.$router.addRoutes({
         //   path: '/home-page',
         //   component: resolve => require(['@/layout/Layout.vue'], resolve),
-        //   children: [
-        //     {
-        //       path: '/home-page/dashboard-page',
-        //       meta: { title: '控制面板' },
-        //       component: resolve => require(['@/views/MainView.vue'], resolve)
-        //     }
-        //   ]
+        //   children: new_routes
         // })
-        // console.log(routes)
+
+        console.log(this.$router.options.routes)
       })
     },
     handleOpen(key, keyPath) {
@@ -142,5 +165,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.line { border-bottom: solid 1px rgba(0,0,0,0.24); margin: 15px 0;}
+.line {
+  color: #fff;
+  border-bottom: solid 1px rgba(0,0,0,0.24); margin: 15px 0;
+  display: flex; flex-direction: column; align-items: center;
+}
 </style>

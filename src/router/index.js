@@ -9,7 +9,6 @@ const Layout = resolve => require(['@/layout/Layout.vue'], resolve)
 Vue.use(VueRouter)
 
 const routes = [
-  
   {
     path: '/',
     component: Layout,
@@ -50,6 +49,16 @@ const routes = [
         component: () => import('@/views/account/Taobao.vue' /* webpackChunkName: 'users' */)
       },
       {
+        path: '/auth',
+        meta: { title: '用户管理' },
+        component: () => import('@/views/account/Auth.vue')
+      },
+      {
+        path: '/channel',
+        meta: { title: '用户管理' },
+        component: () => import('@/views/account/Channel.vue')
+      },
+      {
         path: '/withdrawal',
         meta: { title: '提现设置' },
         component: () => import('@/views/withdrawal/ListView.vue' /* webpackChunkName: 'withdrawal' */)
@@ -66,6 +75,9 @@ const routes = [
       },
     ]
   },
+
+  
+
   {
     path: '/sign',
     meta: { title: '登陆', auth: false },
