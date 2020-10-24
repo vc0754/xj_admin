@@ -82,8 +82,7 @@ nav {
     // &::-webkit-scrollbar-corner { background-color: black; /* 横向滚动条和纵向滚动条相交处尖角的颜色 */ }
     
     > li {
-      &.el-menu-item,
-      &.el-submenu {
+      &.el-menu-item {
         &:hover {
           color: #fff;
           background-image: url('../../assets/menu_active.png');
@@ -94,6 +93,18 @@ nav {
             color: #fff;
           }
         }
+      }
+      &.el-submenu {
+        // &:hover {
+        //   color: #fff;
+        //   background-image: url('../../assets/menu_active.png');
+        //   background-position: right 0;
+        //   background-repeat: no-repeat;
+        //   img { opacity: 1;}
+        //   .el-submenu__title {
+        //     color: #fff;
+        //   }
+        // }
         ul > li {
           &:hover {
             .el-submenu__title {
@@ -115,7 +126,6 @@ nav {
       height: 40px; line-height: 40px;
       display: flex; align-items: center;
       img { opacity: .5;}
-
       
       &.is-active {
         color: #fff;
@@ -444,4 +454,10 @@ h3.section_title {
 
 .el-icon-arrow-down:before {
   color: #fff;
+}
+.d_taobao {
+  .el-dialog__body { padding: 0; height: 560px;}
+  iframe {
+    width: 100%; height: 560px;
+  }
 }

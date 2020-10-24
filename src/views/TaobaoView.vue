@@ -54,6 +54,10 @@
 
     </div>
 
+    <el-dialog title="淘宝授权" :visible.sync="dialogVisible" width="860px" class="d_taobao" @closed="dialog_closed">
+      <iframe :src="url" frameborder="0" v-if="url"></iframe>
+    </el-dialog>
+
   </section>
 </template>
 
@@ -65,6 +69,7 @@ export default {
   components: {},
   data () {
     return {
+      dialogVisible: false,
       is_auth: false,
       url: '',
       tableData: []
@@ -74,6 +79,9 @@ export default {
   },
   methods: {
     ...mapActions([ USER_SIGNOUT ]),
+    dialog_closed() {
+      this.query()
+    },
     query () {
       // 获取淘宝授权信息
       this.$http.post('/api/UserAuth/GetAliMaMaUserList').then(res => {
@@ -93,6 +101,7 @@ export default {
       // 授权回调链接
       this.$http.post('/api/UserAuth/GetRedirectUrl', { id: 0 }).then(res => {
         this.url = res.data
+        // this.dialogVisible = true
         window.location = res.data
       }).catch(err => {
         this.$message.error(err.data.message)
