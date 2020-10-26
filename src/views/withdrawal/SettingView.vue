@@ -11,9 +11,9 @@
     <div class="bg-white formWrap" style="padding: 50px 58px;">
       <el-form ref="form" :model="form" label-width="270px">
         <el-form-item label="每月提现日：" style="margin-bottom: 28px;">
-          <el-input v-model="form.monthKeTiBeginDay" value="" style="width:200px" />
+          <el-input v-model="form.monthKeTiBeginDay" value="" style="width:200px" @input="inputChange('monthKeTiBeginDay')" />
           <span class="p-l-15 p-r-25">号</span>
-          <el-input v-model="form.monthKeTiEndDay" value="" style="width:200px" />
+          <el-input v-model="form.monthKeTiEndDay" value="" style="width:200px" @input="inputChange('monthKeTiEndDay')" />
           <span class="p-l-15">号</span>
         </el-form-item>
 
@@ -29,7 +29,7 @@
         </el-form-item>
 
         <el-form-item label="每日提现次数：" style="margin-bottom: 28px;">
-          <el-input v-model="form.dayTiXianCount" value="" style="width:200px" />
+          <el-input v-model="form.dayTiXianCount" value="" style="width:200px" @input="inputChange('dayTiXianCount')" />
         </el-form-item>
 
         <el-form-item>
@@ -56,6 +56,10 @@ export default {
   },
   methods: {
     ...mapActions([ USER_SIGNOUT ]),
+    inputChange(prop) {
+      this.form[prop] = this.form[prop].replace(/[^\d]/g, '')
+      this.form[prop] = this.form[prop].substring(0, 2) * 1
+    },
     query () {
       this.$http.post('/api/TiXian/GetTiXianBaseConfig').then(res => {
         this.form = res.data
@@ -68,6 +72,9 @@ export default {
       })
     },
     submit() {
+      // if (this.form.monthKeTiBeginDay) this.$message.error('格式不正确')
+      // if (this.form.monthKeTiEndDay) this.$message.error('格式不正确')
+
       this.$http.post('/api/TiXian/UpdateTiXianBaseConfig', this.form).then(res => {
         if (res.stateCode === 1) this.$message.success(res.message)
       }).catch(err => {
@@ -83,12 +90,6 @@ export default {
   },
   mounted() {
     this.query()
-  },
-  beforeCreate() {
-    document.getElementsByTagName('body')[0].className = `${document.getElementsByTagName('body')[0].className} setting_wrap`
-  },
-  beforeDestroy() {
-    document.body.removeAttribute('class', 'setting_wrap')
   }
 }
 </script>

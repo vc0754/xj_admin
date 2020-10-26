@@ -79,9 +79,9 @@ export default {
       activeName: 'tab-1',
       statuses: [
         { label: '全部', value: -1, num: 0 },
-        { label: '审核中', value: 0, num: 0 },
-        { label: '提现成功', value: 1, num: 0 },
-        { label: '驳回', value: 2, num: 0 }
+        { label: '审核中', value: 1, num: 0 },
+        { label: '提现成功', value: 2, num: 0 },
+        { label: '驳回', value: 3, num: 0 }
       ],
       loading: false,
       currentPage: 1,
