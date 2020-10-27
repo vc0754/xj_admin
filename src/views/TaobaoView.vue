@@ -167,6 +167,9 @@ export default {
     }
   },
   mounted () {
+    if (this.access_token && this.taobao_user_nick && this.state) {
+      this.on_auth_callback()
+    }
     this.query()
     // this.on_auth()
     // this.on_channel_open()
