@@ -35,7 +35,7 @@
       <el-col :span="6">
         <div class="bg-white">
           <div class="flex flex-column">
-            <span class="fs-32 num">{{ data.userNum1 }}</span>
+            <span class="fs-32 num">{{ data.userNum3 }}</span>
             <span>用户量</span>
           </div>
         </div>

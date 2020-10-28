@@ -43,6 +43,7 @@
         <el-table-column label="提现状态" width="180">
           <template slot-scope="scope">
             {{ scope.row.istate == 1 ? '提现成功' : scope.row.istate == 2 ? '驳回' : '申请中' }}
+            <p v-if="scope.row.istate == 2">驳回理由：{{ scope.row.remark }}</p>
           </template>
         </el-table-column>
       </el-table>
@@ -79,9 +80,9 @@ export default {
       activeName: 'tab-1',
       statuses: [
         { label: '全部', value: -1, num: 0 },
-        { label: '审核中', value: 1, num: 0 },
-        { label: '提现成功', value: 2, num: 0 },
-        { label: '驳回', value: 3, num: 0 }
+        { label: '审核中', value: 0, num: 0 },
+        { label: '提现成功', value: 1, num: 0 },
+        { label: '驳回', value: 2, num: 0 }
       ],
       loading: false,
       currentPage: 1,
@@ -141,9 +142,9 @@ export default {
         this.items = res.data.items
         this.totalNum = res.data.totalNum
         this.statuses[0].num = res.data.allCount
-        this.statuses[1].num = res.data.count1
-        this.statuses[2].num = res.data.count2
-        this.statuses[3].num = res.data.count3
+        this.statuses[1].num = res.data.count0
+        this.statuses[2].num = res.data.count1
+        this.statuses[3].num = res.data.count2
         this.loading = false
       }).catch(err => {
         this.loading = false

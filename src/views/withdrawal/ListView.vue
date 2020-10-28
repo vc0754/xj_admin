@@ -41,9 +41,10 @@
         <el-table-column prop="tiXianTypeName" label="提现类型" width="150"></el-table-column>
         <el-table-column prop="alipayOrderNo" label="支付宝交易号" width="165"></el-table-column>
 
-        <el-table-column label="提现状态" width="90">
+        <el-table-column label="提现状态" width="120">
           <template slot-scope="scope">
             {{ scope.row.istate == 1 ? '提现成功' : scope.row.istate == 2 ? '驳回' : '申请中' }}
+            <p v-if="scope.row.istate == 2">驳回理由：{{ scope.row.remark }}</p>
           </template>
         </el-table-column>
 

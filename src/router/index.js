@@ -15,7 +15,7 @@ const routes = [
     children: [
       {
         path: '/',
-        meta: { title: '控制面板' },
+        meta: { title: '运营后台' },
         component: () => import('@/views/MainView.vue' /* webpackChunkName: 'main' */)
       },
       {

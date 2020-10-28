@@ -152,6 +152,7 @@ export default {
         }
       }).then(() => {
         this.$router.replace({ path: '/taobao' })
+        this.query()
       }).catch(err => {
         this.$message.error(err.data.message)
         if (err.data.message === '身份验证失败') {
@@ -162,15 +163,16 @@ export default {
     }
   },
   watch: {
-    access_token(val) {
-      if (val) this.on_auth_callback()
-    }
+    // access_token(val) {
+    //   if (val) this.on_auth_callback()
+    // }
   },
   mounted () {
     if (this.access_token && this.taobao_user_nick && this.state) {
       this.on_auth_callback()
+    } else {
+      this.query()
     }
-    this.query()
     // this.on_auth()
     // this.on_channel_open()
   },
