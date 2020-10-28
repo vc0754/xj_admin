@@ -44,7 +44,7 @@
         <el-table-column label="提现状态" width="120">
           <template slot-scope="scope">
             {{ scope.row.istate == 1 ? '提现成功' : scope.row.istate == 2 ? '驳回' : '申请中' }}
-            <p v-if="scope.row.istate == 2">驳回理由：{{ scope.row.remark }}</p>
+            <span v-if="scope.row.istate == 2">（{{ scope.row.remark }}）</span>
           </template>
         </el-table-column>
 

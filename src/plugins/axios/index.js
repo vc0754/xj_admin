@@ -4,6 +4,9 @@ import querystring from 'querystring'
 
 promise.polyfill()
 
+// API 手册
+// http://yyapi_test.xijiee.com/swagger/index.html
+
 axios.defaults.timeout = 5000
 axios.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8'
 axios.defaults.baseURL = (process.env.NODE_ENV === 'development' ? 'http://localhost:7001/' : 'http://yyapi_test.xijiee.com/')

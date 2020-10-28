@@ -58,7 +58,12 @@
                 {{ scope.row.istate == 1 ? '提现成功' : scope.row.istate == 2 ? '驳回' : '申请中' }}
               </template>
             </el-table-column>
-            <el-table-column prop="remark" label="拒绝理由"></el-table-column>
+            <el-table-column label="拒绝理由">
+              <template slot-scope="scope">
+                <span v-if="scope.row.istate == 2">{{ scope.row.remark }}</span>
+                <span v-else>---</span>
+              </template>
+            </el-table-column>
           </el-table>
           
           <div class="flex flex-x-right p-t-40 p-b-10">
