@@ -57,7 +57,11 @@
         </el-table-column>
 
         <el-table-column prop="settlementAmount" label="税后佣金" width="120"></el-table-column>
-        <el-table-column prop="commissionRate" label="佣金比例" width="120"></el-table-column>
+        <el-table-column label="佣金比例" width="120">
+          <template slot-scope="scope">
+            {{ scope.row.commissionRate | fixed2 }}%
+          </template>
+        </el-table-column>
 
         <el-table-column label="自购佣金" width="120">
           <template slot-scope="scope">
@@ -153,7 +157,7 @@ export default {
         goodsInfo: this.form.name,
         mobile: this.form.region === 'phone' && this.form.input || '',
         nickName: this.form.region === 'nickName' && this.form.input || '',
-        startTime: this.form.date && this.form.date.length && moment(this.form.date[0]).format('YYYY-MM-DD') || '',
+        stateTime: this.form.date && this.form.date.length && moment(this.form.date[0]).format('YYYY-MM-DD') || '',
         endTime: this.form.date && this.form.date.length && moment(this.form.date[1]).format('YYYY-MM-DD') || '',
         orderState: this.activeName.substring(3),
         origin: this.channel_id,
@@ -193,6 +197,13 @@ export default {
   watch: {
     channel_id() {
       this.query()
+      this.form = {
+        sn: '',
+        name: '',
+        region: 'nickName',
+        input: '',
+        date: []
+      }
     }
   },
   mounted () {
